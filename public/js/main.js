@@ -9,6 +9,79 @@ var Photos = Backbone.Collection.extend({
 var photos = new Photos();
 var files_to_upload;
 
+var View = {};
+
+View.UploadDrop = Backbone.View.extend({
+  className: 'upload-drop',
+
+  events: {
+    'dragover .drop': 'handleDragOver',
+    'drop': 'handleFileDrop',
+    'dragenter .drop': 'handleDragEnter',
+    'dragleave .drop': 'handleDragLeave',
+  },
+
+  template: _.template(
+    '<table>'
+  + '  <tr>'
+  + '    <td class="drop custom-drop custom-drop1 column1">Beijing Trip</td>'
+  + '    <td class="drop main-drop column2" rowspan="3">Uncategorized</td>'
+  + '    <td class="drop custom-drop custom-drop4 column3">Dustin Moore</td>'
+  + '  </tr>'
+  + '  <tr>'
+  + '    <td class="drop custom-drop custom-drop2 column1">Funny Cats</td>'
+  + '    <td class="disabled drop custom-drop custom-drop5 column3"></td>'
+  + '  </tr>'
+  + '  <tr>'
+  + '    <td class="drop custom-drop custom-drop3 column1">Jade Moore</td>'
+  + '    <td class="disabled drop custom-drop custom-drop6 column3"></td>'
+  + '  </tr>'
+  + '</table>'
+  ),
+
+  initialize: function() {
+    this.render();
+  },
+
+  render: function() {
+    this.$el.html(this.template());
+
+    return this;
+  },
+
+  handleDragOver: function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.originalEvent.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  },
+
+  handleFileDrop: function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var $drop = $(evt.target);
+
+    if (!$drop.hasClass('drop'))
+      return;
+
+    $drop.removeClass('hover');
+  
+    var files = evt.originalEvent.dataTransfer.files; // FileList object.
+  
+console.log('got files?: ', files);
+    //loadFiles(files);
+  },
+
+  handleDragEnter: function(evt) {
+    $(evt.target).addClass('hover');
+  },
+
+  handleDragLeave: function(evt) {
+    $(evt.target).removeClass('hover');
+  },
+
+});
+
 $(function() {
   photos.on('reset', onReset);
   photos.on('add', addPhoto);
@@ -16,12 +89,11 @@ $(function() {
 
   $(':button').click(uploadFiles);
 
-  // Setup the dnd listeners.
-  $('#drop_zone').on('dragover', handleDragOver)
-                 .on('drop', handleFileDrop);
-
   $(':file').on('change', handleFileInputChange);
 
+  upload_drop = new View.UploadDrop();
+
+  $('body').append(upload_drop.el);
 });
 
 function uploadFiles(evt) {
@@ -52,15 +124,6 @@ function uploadFiles(evt) {
     contentType: false,
     processData: false
   });
-}
-
-function handleFileDrop(evt) {
-  evt.stopPropagation();
-  evt.preventDefault();
-
-  var files = evt.originalEvent.dataTransfer.files; // FileList object.
-
-  loadFiles(files);
 }
 
 function handleFileInputChange(evt) {
@@ -95,12 +158,6 @@ function loadFiles(files) {
     reader.readAsDataURL(f);
   }
   files_to_upload = files;
-}
-
-function handleDragOver(evt) {
-  evt.stopPropagation();
-  evt.preventDefault();
-  evt.originalEvent.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
 }
 
 function onReset() {
