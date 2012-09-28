@@ -6,7 +6,7 @@ var express = require('express'),
     formidable = require('formidable'),
     stylus = require('stylus'),
     fs = require('fs'),
-    Photo = require('./photo').Photo;
+    Photo = require('./lib/photo').Photo;
  
 var app = express();
  
@@ -30,7 +30,7 @@ app.get('/photo', function(req, res) {
 });
 
 app.get('/photo/original/:id?', function(req, res) {
-  new Photo(req.params.id, function(err, photo) {
+  var photo = new Photo(req.params.id, function(err) {
     photo.getImage('original', function(err, image) {
       if (!err) {
         res.status(200);
@@ -38,13 +38,14 @@ app.get('/photo/original/:id?', function(req, res) {
         res.send(image.data);
       } else {
         res.status(500);
+        res.send('');
       }
     });
   });
 });
 
 app.get('/photo/thumb/:id?', function(req, res) {
-  new Photo(req.params.id, function(err, photo) {
+  var photo = new Photo(req.params.id, function(err) {
     photo.getImage('thumb', function(err, image) {
       if (!err) {
         res.status(200);
@@ -52,6 +53,7 @@ app.get('/photo/thumb/:id?', function(req, res) {
         res.send(image.data);
       } else {
         res.status(500);
+        res.send('');
       }
     });
   });
