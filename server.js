@@ -80,13 +80,20 @@ app.post('/photo', function(req, res) {
   form.on('file', function(field, file) {
     console.log(field, file)
     files.push([field, file])
-    var photo = new Photo();
-    photo.create(file);
   })
   .on('end', function() {
     console.log('at the end');
     console.log(util.inspect(files))
-    res.redirect('back');
+    var finished_count = 0
+    files.forEach(function(file) {
+      var photo = new Photo();
+      photo.create(file[1], function(err) {
+        console.log('did we get an error?: ', err);
+        finished_count++;
+        if (finished_count == files.length)
+          res.send('');
+      });
+    });
   })
      
   form.parse(req)

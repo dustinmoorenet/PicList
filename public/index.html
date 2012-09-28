@@ -2,12 +2,20 @@
 <html>
 <head>
   <link type="text/css" rel="stylesheet" href="/css/main.css" />
+  <script type="text/javascript" src="/js/extern/jquery.js"></script>
+  <script type="text/javascript" src="/js/extern/underscore.js"></script>
+  <script type="text/javascript" src="/js/extern/backbone.js"></script>
+  <script type="text/javascript" src="/js/main.js"></script>
 </head>
 <body>
   <h1>Welcome</h1>
-  <form method="post" enctype="multipart/form-data" action="/photo">
-  <p>Image: <input type="file" name="image" /></p>
-  <p><input type="submit" value="Upload" /></p>
+  <form enctype="multipart/form-data">
+  <p>Image: <input type="file" name="image" multiple /></p>
+  <p><input type="button" value="Upload" /></p>
   </form>
+  <div id="drop_zone"></div>
+  <div id="list"></div>
+  <progress></progress>
+  <div id="image_list"></div>
 </body>
 </html>
