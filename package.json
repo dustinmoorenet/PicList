@@ -1,0 +1,13 @@
+{
+  "name": "pic-list",
+  "description": "PicList: photo website",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "nano": "",
+    "formidable": "",
+    "express": "",
+    "stylus": "",
+    "imagemagick": ""
+  }
+}
