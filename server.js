@@ -7,6 +7,7 @@ var express = require('express'),
     stylus = require('stylus'),
     fs = require('fs'),
     Photo = require('./lib/photo').Photo;
+    Photos = require('./lib/photos').Photos;
  
 var app = express();
  
@@ -24,6 +25,15 @@ function compileMethod(str) {
 };
  
 app.use(express.static(__dirname + '/public'));
+
+app.get('/photos', function(req, res) {
+  new Photos().all(function(err, photos) {
+    if (!err)
+      res.json(photos);
+    else
+      res.json([]);
+  });
+});
 
 app.get('/photo', function(req, res) {
   res.json(['hey']);
