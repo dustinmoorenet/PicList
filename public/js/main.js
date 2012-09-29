@@ -7,7 +7,14 @@ var Photos = Backbone.Collection.extend({
 });
 
 var photos = new Photos();
-var files_to_upload;
+
+var UploadFile = Backbone.Model.extend({
+  urlRoot: '/photo/' 
+});
+
+var UploadFiles = Backbone.Collection.extend({
+  model: UploadFile 
+});
 
 var View = {};
 
@@ -75,7 +82,15 @@ View.UploadDrop = Backbone.View.extend({
 
     $drop.removeClass('hover');
   
-    var files = evt.originalEvent.dataTransfer.files; // FileList object.
+    var files = [];
+    _.each(evt.originalEvent.dataTransfer.files, function(file) {
+      files.push(new UploadFile({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        file: file
+      }));
+    });
   
     this.trigger('received_files', {files: files});
 
@@ -97,16 +112,20 @@ View.Uploader = Backbone.View.extend({
   className: 'uploader',
 
   template: _.template(
-    '<header>File Uploads</header>'
-  + '<ul>'
-  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
-  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
-  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
-  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
-  + '</ul>'
+    '<header>'
+  + '  <div class="title">File Uploads</div>'
+  + '  <div class="count-holder">(<span class="count">0</span>)</div>'
+  + '</header>'
+  + '<ul></ul>'
+  ),
+
+  itemTemplate: _.template(
+    '<li><img src="<%= source %>" title="<%= name %>" /><div><%= name %></div></li>'
   ),
 
   initialize: function() {
+    this.files_to_upload = new UploadFiles();
+
     this.render();
   },
 
@@ -120,15 +139,17 @@ View.Uploader = Backbone.View.extend({
 
   processFiles: function(evt) {
 console.log('processFiles: ', evt);
-    var files = evt.files;
+    var view = this,
+        files = evt.files;
 
     // Loop through the FileList and render image files as thumbnails.
-    for (var i = 0, f; f = files[i]; i++) {
+    files.forEach(function(file) {
+
+      var f = file.get('file');
 
       // Only process image files.
-      if (!f.type.match('image.*')) {
-        continue;
-      }
+      if (!f.type.match('image.*'))
+        return;
 
       var reader = new FileReader();
 
@@ -136,17 +157,19 @@ console.log('processFiles: ', evt);
       reader.onload = (function(theFile) {
         return function(e) {
           // Render thumbnail.
-          var span = document.createElement('span');
-          span.innerHTML = ['<img class="thumb" src="', e.target.result,
-                            '" title="', escape(theFile.name), '"/>'].join('');
-          document.getElementById('list').insertBefore(span, null);
+          view.$('ul').prepend(view.itemTemplate({
+            source: e.target.result,
+            name: theFile.name
+          }));
+
+          view.$('.count').html(view.$('li').length);
         };
       })(f);
 
       // Read in the image file as a data URL.
       reader.readAsDataURL(f);
-    }
-    this.files_to_upload = files;
+    });
+    this.files_to_upload.add(files);
 
 console.log('got files from file source');
   }

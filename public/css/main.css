@@ -1,6 +1,3 @@
-html{margin:0;padding:0;font-family:sans-serif}
-body{margin:0;padding:0}
-img{border:0}
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
 body{line-height:1}
@@ -8,6 +5,7 @@ ol,ul{list-style:none}
 blockquote,q{quotes:none}
 blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}
 table{border-collapse:collapse;border-spacing:0}
+html{font-family:sans-serif}
 .main{position:absolute;top:0;left:0;height:100%;width:100%;background:#808080}
 .upload-drop{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:.75;color:#fff;text-align:center;}
 .upload-drop > table{width:100%;height:100%;border-spacing:20px;}
@@ -19,6 +17,12 @@ table{border-collapse:collapse;border-spacing:0}
 .upload-drop > table .column1{width:20%}
 .upload-drop > table .column2{width:60%}
 .upload-drop > table .column3{width:20%}
-.uploader{background:#fff;position:absolute;bottom:0;right:20px;width:200px;}
-.uploader li{line-height:40px;}
-.uploader li img{width:30px;height:30px}
+.uploader{background:#fff;position:absolute;bottom:0;right:20px;padding:10px 10px 0;border-radius:10px 10px 0 0;}
+.uploader header{height:16px;padding-bottom:10px;}
+.uploader header .title{float:left}
+.uploader header .count-holder{float:right}
+.uploader ul{max-height:150px;overflow-y:auto;padding-bottom:10px}
+.uploader li{height:30px;line-height:30px;font-size:.8em;padding:3px 0;}
+.uploader li img{width:30px;height:30px;display:block;float:left}
+.uploader li div{float:left;width:150px;padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uploader li:nth-child(odd){background:#f0f0f0}
