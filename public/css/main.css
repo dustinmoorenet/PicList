@@ -1,8 +1,15 @@
 html{margin:0;padding:0;font-family:sans-serif}
-body{margin:0;padding:0;}
-body h1{color:#f00}
-#drop_zone{width:200px;height:200px;border:solid 1px #000}
-.upload-drop{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:.75;color:#fff;text-align:center;}
+body{margin:0;padding:0}
+img{border:0}
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
+body{line-height:1}
+ol,ul{list-style:none}
+blockquote,q{quotes:none}
+blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}
+table{border-collapse:collapse;border-spacing:0}
+.main{position:absolute;top:0;left:0;height:100%;width:100%;background:#808080}
+.upload-drop{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:.75;color:#fff;text-align:center;}
 .upload-drop > table{width:100%;height:100%;border-spacing:20px;}
 .upload-drop > table .drop{border:solid 10px rgba(255,255,255,0.5);border-radius:6px 6px;}
 .upload-drop > table .drop.disabled{visibility:hidden}
@@ -12,3 +19,6 @@ body h1{color:#f00}
 .upload-drop > table .column1{width:20%}
 .upload-drop > table .column2{width:60%}
 .upload-drop > table .column3{width:20%}
+.uploader{background:#fff;position:absolute;bottom:0;right:20px;width:200px;}
+.uploader li{line-height:40px;}
+.uploader li img{width:30px;height:30px}

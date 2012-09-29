@@ -17,8 +17,8 @@ View.UploadDrop = Backbone.View.extend({
   events: {
     'dragover .drop': 'handleDragOver',
     'drop': 'handleFileDrop',
-    'dragenter .drop': 'handleDragEnter',
-    'dragleave .drop': 'handleDragLeave',
+    'dragenter': 'handleDragEnter',
+    'dragleave': 'handleDragLeave',
   },
 
   template: _.template(
@@ -40,13 +40,20 @@ View.UploadDrop = Backbone.View.extend({
   ),
 
   initialize: function() {
-    this.render();
   },
 
   render: function() {
     this.$el.html(this.template());
 
     return this;
+  },
+
+  show: function() {
+    this.$el.show();
+  },
+
+  hide: function() {
+    this.$el.hide();
   },
 
   handleDragOver: function(evt) {
@@ -61,6 +68,8 @@ View.UploadDrop = Backbone.View.extend({
 
     var $drop = $(evt.target);
 
+    this.hide();
+
     if (!$drop.hasClass('drop'))
       return;
 
@@ -68,18 +77,112 @@ View.UploadDrop = Backbone.View.extend({
   
     var files = evt.originalEvent.dataTransfer.files; // FileList object.
   
-console.log('got files?: ', files);
-    //loadFiles(files);
+    this.trigger('received_files', {files: files});
+
   },
 
   handleDragEnter: function(evt) {
-    $(evt.target).addClass('hover');
+    $(evt.target).filter('.drop').addClass('hover');
   },
 
   handleDragLeave: function(evt) {
     $(evt.target).removeClass('hover');
+
+    if (evt.originalEvent.x == 0 && evt.originalEvent.y == 0)
+      this.hide();
+  },
+});
+
+View.Uploader = Backbone.View.extend({
+  className: 'uploader',
+
+  template: _.template(
+    '<header>File Uploads</header>'
+  + '<ul>'
+  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
+  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
+  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
+  + '  <li><img src="/photo/thumb/3c0fd48eb04fa9ca6fec58d96301c1af" /><span>Some File Name.jpg</li>'
+  + '</ul>'
+  ),
+
+  initialize: function() {
+    this.render();
   },
 
+  render: function() {
+    this.$el.html(this.template());
+  },
+
+  attachFileSource: function(file_source) {
+    file_source.on('received_files', this.processFiles, this);
+  },
+
+  processFiles: function(evt) {
+console.log('processFiles: ', evt);
+    var files = evt.files;
+
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {
+
+      // Only process image files.
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+
+      var reader = new FileReader();
+
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          var span = document.createElement('span');
+          span.innerHTML = ['<img class="thumb" src="', e.target.result,
+                            '" title="', escape(theFile.name), '"/>'].join('');
+          document.getElementById('list').insertBefore(span, null);
+        };
+      })(f);
+
+      // Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+    }
+    this.files_to_upload = files;
+
+console.log('got files from file source');
+  }
+}, Backbone.Events);
+
+View.Main = Backbone.View.extend({
+  className: 'main',
+
+  events: {
+  },
+
+  initialize: function() {
+    var view = this;
+
+    this.upload_drop = new View.UploadDrop();
+
+    this.$el.append(this.upload_drop.el);
+
+    this.uploader = new View.Uploader();
+
+    this.$el.append(this.uploader.el);
+
+    $('body').get(0).addEventListener('dragenter', function() {
+      view.handleDragEnter(); }, false);
+    
+    this.uploader.attachFileSource(this.upload_drop);
+  },
+
+  render: function() {
+    this.upload_drop.render();
+  },
+
+  handleDragEnter: function() {
+console.log('handleDragEnter');
+    this.upload_drop.show();
+  },
 });
 
 $(function() {
@@ -87,13 +190,15 @@ $(function() {
   photos.on('add', addPhoto);
   photos.fetch({url: '/photos/'});
 
-  $(':button').click(uploadFiles);
+//  $(':button').click(uploadFiles);
+//
+//  $(':file').on('change', handleFileInputChange);
 
-  $(':file').on('change', handleFileInputChange);
+  var main = new View.Main();
 
-  upload_drop = new View.UploadDrop();
+  $('body').append(main.el);
 
-  $('body').append(upload_drop.el);
+  main.render();
 });
 
 function uploadFiles(evt) {
@@ -133,31 +238,6 @@ function handleFileInputChange(evt) {
 }
 
 function loadFiles(files) {
-  // Loop through the FileList and render image files as thumbnails.
-  for (var i = 0, f; f = files[i]; i++) {
-
-    // Only process image files.
-    if (!f.type.match('image.*')) {
-      continue;
-    }
-
-    var reader = new FileReader();
-
-    // Closure to capture the file information.
-    reader.onload = (function(theFile) {
-      return function(e) {
-        // Render thumbnail.
-        var span = document.createElement('span');
-        span.innerHTML = ['<img class="thumb" src="', e.target.result,
-                          '" title="', escape(theFile.name), '"/>'].join('');
-        document.getElementById('list').insertBefore(span, null);
-      };
-    })(f);
-
-    // Read in the image file as a data URL.
-    reader.readAsDataURL(f);
-  }
-  files_to_upload = files;
 }
 
 function onReset() {
