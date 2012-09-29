@@ -23,7 +23,9 @@ html{font-family:sans-serif}
 .uploader header .count-holder{float:right}
 .uploader ul{max-height:150px;overflow-y:auto;padding-bottom:10px}
 .uploader li{height:30px;line-height:30px;font-size:.8em;padding:3px 0;}
-.uploader li img{width:30px;height:30px;display:block;float:left}
-.uploader li .name{float:left;width:150px;padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uploader li .icon{width:30px;height:30px;background:#808080;float:left}
+.uploader li .label{float:left;width:150px;padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .uploader li .progress{clear:both;height:2px;width:0%;background:#008000}
 .uploader li:nth-child(odd){background:#f0f0f0}
+.photo-list{width:100%;height:100%;overflow-y:auto}
+.photo-list-item{float:left;padding:10px;margin:20px;background:#fff}

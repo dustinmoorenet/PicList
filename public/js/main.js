@@ -1,19 +1,36 @@
-var Photo = Backbone.Model.extend({
+var Model = {};
+var Collection = {};
+
+Model.Photo = Backbone.Model.extend({
   urlRoot: '/photo/' 
 });
 
-var Photos = Backbone.Collection.extend({
-  model: Photo
+Collection.Photos = Backbone.Collection.extend({
+  model: Model.Photo
 });
 
-var photos = new Photos();
-
-var UploadFile = Backbone.Model.extend({
-  urlRoot: '/photo/' 
+/**
+ * status
+ *   initializing: before upload started
+ *   uploading: currently uploading
+ *   processing: server side processing after upload
+ *   complete: server side finished
+ *   error: an error occurred
+ */
+Model.UploadSet = Backbone.Model.extend({
+  defaults: {
+    status: 'initializing',
+    files: null
+  },
+  initialize: function() {
+    this.set('files', new Collection.Files());
+  }
 });
 
-var UploadFiles = Backbone.Collection.extend({
-  model: UploadFile 
+Model.File = Backbone.Model.extend({});
+
+Collection.Files = Backbone.Collection.extend({
+  model: Model.File 
 });
 
 var View = {};
@@ -81,19 +98,20 @@ View.UploadDrop = Backbone.View.extend({
       return;
 
     $drop.removeClass('hover');
+
+    var upload_set = new Model.UploadSet();
   
-    var files = [];
+    var files = upload_set.get('files');
     _.each(evt.originalEvent.dataTransfer.files, function(file) {
-      files.push(new UploadFile({
+      files.add({
         name: file.name,
         size: file.size,
         type: file.type,
         file: file
-      }));
+      });
     });
-  
-    this.trigger('received_files', {files: files});
 
+    this.trigger('received_files', {upload_set: upload_set});
   },
 
   handleDragEnter: function(evt) {
@@ -114,8 +132,8 @@ View.UploaderItem = Backbone.View.extend({
   tagName: 'li',
 
   template: _.template(
-    '<img src="<%= source %>" title="<%= name %>" />'
-  + '<div class="name"><%= name %></div>'
+    '<div class="icon"></div>'
+  + '<div class="label"></div>'
   + '<div class="progress"></div>'
   ),
 
@@ -126,7 +144,10 @@ View.UploaderItem = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(this.template());
+
+    this.setLabel();
+
     return this;
   },
 
@@ -137,17 +158,59 @@ View.UploaderItem = Backbone.View.extend({
     this.$el.remove();
   },
 
+  setLabel: function() {
+    var label = '',
+        status = this.model.get('status'),
+        count = this.model.get('files').length,
+        noun = count + (count == 1 ? ' file' : ' files');
+
+    switch (status) {
+      case 'initializing':
+        label = noun + ' preparing for upload';
+        break;
+      case 'uploading':
+        label = 'uploading ' + noun;
+        break;
+      case 'processing':
+        label = 'processing ' + noun;
+        break;
+      case 'complete':
+        label = noun + ' uploaded';
+        break;
+      case 'error':
+        label = noun + ' errored while uploading';
+        break;
+      default:
+    }
+
+    this.model.set('label', label);
+
+    this.$('.label').text(label);
+  },
+
   updateProgress: function() {
-    this.$('.progress').css('width', (this.model.get('percent_uploaded') * 100) + '%');
+    var progress = this.model.get('percent_uploaded') * 100;
+
+    if (Math.round(progress) == 100)
+      this.model.set('status', 'processing');
+
+    this.$('.progress').css('width',  progress + '%');
   },
 
   statusChange: function() {
     var status = this.model.get('status');
 
-    if (status == 'complete')
-      this.remove();
-    else if (status == 'error')
-      this.error();
+    this.setLabel();
+
+    switch (status) {
+      case 'complete':
+        //this.remove();
+        break;
+      case 'error':
+        this.error();
+        break;
+      default:
+    }
   },
 
   error: function() {
@@ -167,10 +230,10 @@ View.Uploader = Backbone.View.extend({
   ),
 
   initialize: function() {
-    this.files_to_upload = new UploadFiles();
+    this.collection = new Backbone.Collection();
 
-    this.files_to_upload.on('add', this.uploadFile, this);
-    this.files_to_upload.on('remove', this.onRemove, this);
+    this.collection.on('add', this.uploadItem, this);
+    this.collection.on('remove', this.itemRemoved, this);
 
     this.render();
 
@@ -181,89 +244,143 @@ View.Uploader = Backbone.View.extend({
     this.$el.html(this.template());
   },
 
-  onRemove: function() {
-    if (this.files_to_upload.length == 0)
+  renderCount: function() {
+    this.$('.count').html(this.collection.length);
+  },
+
+  itemRemoved: function() {
+console.log('item removed');
+    if (this.collection.length == 0)
       this.$el.hide();
+
+    this.renderCount();
   },
 
   attachFileSource: function(file_source) {
-    file_source.on('received_files', this.processFiles, this);
+    file_source.on('received_files', this.processItem, this);
   },
 
-  processFiles: function(evt) {
+  processItem: function(evt) {
     var view = this,
-        files = evt.files;
+        upload_set = evt.upload_set;
 
     this.$el.show();
 
-    // Loop through the FileList and render image files as thumbnails.
-    files.forEach(function(file) {
+    var item_view = new View.UploaderItem({model: upload_set});
 
-      var f = file.get('file');
+    this.$('ul').append(item_view.el);
 
-      // Only process image files.
-      if (!f.type.match('image.*'))
-        return;
+    this.collection.add(upload_set);
 
-      var reader = new FileReader();
-
-      // Closure to capture the file information.
-      reader.onload = (function(theFile) {
-        return function(e) {
-          file.set('source', e.target.result);
-
-          var item_view = new View.UploaderItem({model: file});
-
-          view.$('ul').prepend(item_view.el);
-
-          view.$('.count').html(view.$('li').length);
-        };
-      })(f);
-
-      // Read in the image file as a data URL.
-      reader.readAsDataURL(f);
-    });
-    this.files_to_upload.add(files);
+    this.renderCount();
   },
 
-  uploadFile: function(file) {
-      var formData = new FormData();
+  uploadItem: function(upload_set) {
+    var formData = new FormData();
   
+    var files = upload_set.get('files');
+
+    files.each(function(file) {
       formData.append(file.get('name'), file.get('file'));
+    });
   
-      $.ajax({
-        url: '/photo',  //server script to process data
-        type: 'POST',
-        xhr: function() {  // custom xhr
-          myXhr = $.ajaxSettings.xhr();
-          if (myXhr.upload) { // check if upload property exists
-            // for handling the progress of the upload
-            myXhr.upload.addEventListener('progress', function(evt) {
-              if(evt.lengthComputable){
-                file.set('percent_uploaded', evt.loaded / evt.total);
-              }
-            }, false);
-          }
-          return myXhr;
-        },
-        //Ajax events
-        beforeSend: function() {
-          file.set('status', 'uploading');
-        },
-        success: function() {
-          file.set('status', 'complete');
-        },
-        error: function() {
-          file.set('status', 'error');
-        },
-        // Form data
-        data: formData,
-        //Options to tell JQuery not to process data or worry about content-type
-        cache: false,
-        contentType: false,
-        processData: false
-      });
+    $.ajax({
+      url: '/photo',  //server script to process data
+      type: 'POST',
+      xhr: function() {  // custom xhr
+        myXhr = $.ajaxSettings.xhr();
+        if (myXhr.upload) { // check if upload property exists
+          // for handling the progress of the upload
+          myXhr.upload.addEventListener('progress', function(evt) {
+            if(evt.lengthComputable){
+              upload_set.set('percent_uploaded', evt.loaded / evt.total);
+            }
+          }, false);
+        }
+        return myXhr;
+      },
+      //Ajax events
+      beforeSend: function() {
+        upload_set.set('status', 'uploading');
+      },
+      success: function() {
+        upload_set.set('status', 'complete');
+      },
+      error: function() {
+        upload_set.set('status', 'error');
+      },
+      // Form data
+      data: formData,
+      //Options to tell JQuery not to process data or worry about content-type
+      cache: false,
+      contentType: false,
+      processData: false
+    });
   },
+});
+
+View.PhotoList = Backbone.View.extend({
+  className: 'photo-list',
+
+  initialize: function() {
+    this.collection = new Collection.Photos();
+
+    this.collection.on('reset', this.render, this);
+    this.collection.on('add', this.addPhoto, this);
+
+    this.collection.fetch({url: '/photos/'});
+  },
+
+  render: function() {
+    var view = this;
+
+    this.clearPhotos();
+  
+    this.collection.each(function(photo) {
+      view.addPhoto(photo);
+    });
+  },
+
+  remove: function() {
+    this.$el.remove();
+
+    this.collection.off('reset', this.onReset, this);
+    this.collection.off('add', this.addPhoto, this);
+  },
+
+  clearPhotos: function() {
+    this.$('.photo-list-item').remove();
+  },
+  
+  addPhoto: function(photo) {
+    var item = new View.PhotoListItem({model: photo});
+    this.$el.append(item.el);
+  },
+  
+  getPhotos: function() {
+    this.collection.fetch({add: true, url: '/photos/'});
+  }
+});
+
+View.PhotoListItem = Backbone.View.extend({
+  className: 'photo-list-item',
+
+  template: _.template(
+    '<img src="/photo/thumb/<%= id %>" />'
+  ),
+
+  initialize: function() {
+    this.render();
+  },
+
+  render: function() {
+
+    this.$el.html(this.template(this.model.toJSON()));
+
+    return this;
+  },
+
+  
 });
 
 View.Main = Backbone.View.extend({
@@ -274,6 +391,10 @@ View.Main = Backbone.View.extend({
 
   initialize: function() {
     var view = this;
+
+    this.photo_list = new View.PhotoList();
+
+    this.$el.append(this.photo_list.el);
 
     this.upload_drop = new View.UploadDrop();
 
@@ -299,10 +420,6 @@ View.Main = Backbone.View.extend({
 });
 
 $(function() {
-  photos.on('reset', onReset);
-  photos.on('add', addPhoto);
-  photos.fetch({url: '/photos/'});
-
 //  $(':button').click(uploadFiles);
 //
 //  $(':file').on('change', handleFileInputChange);
@@ -318,30 +435,4 @@ function handleFileInputChange(evt) {
   var files = evt.target.files; // FileList object
 
   loadFiles(files);
-}
-
-function loadFiles(files) {
-}
-
-function onReset() {
-  clearPhotos();
-
-  photos.each(function(photo) {
-    addPhoto(photo);
-  });
-}
-
-function clearPhotos() {
-  $('#image_list img').remove();
-}
-
-function addPhoto(photo) {
-  $('#image_list').append('<img src="/photo/thumb/' + photo.id + '" />');
-}
-
-function progressHandlingFunction(e){
-}
-
-function completeHandler(e) {
-  photos.fetch({add: true, url: '/photos/'});
 }
