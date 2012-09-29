@@ -8,8 +8,8 @@ table{border-collapse:collapse;border-spacing:0}
 html{font-family:sans-serif}
 .main{position:absolute;top:0;left:0;height:100%;width:100%;background:#808080}
 .upload-drop{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:.75;color:#fff;text-align:center;}
-.upload-drop > table{width:100%;height:100%;border-spacing:20px;}
-.upload-drop > table .drop{border:solid 10px rgba(255,255,255,0.5);border-radius:6px 6px;}
+.upload-drop > table{width:100%;height:100%;border-spacing:20px;border-collapse:separate;}
+.upload-drop > table .drop{vertical-align:middle;border:solid 10px rgba(255,255,255,0.5);border-radius:6px 6px;}
 .upload-drop > table .drop.disabled{visibility:hidden}
 .upload-drop > table .drop:hover,.upload-drop > table .drop.hover{border-color:rgba(255,255,255,0.9)}
 .upload-drop > table .custom-drop{height:33%}
@@ -19,10 +19,11 @@ html{font-family:sans-serif}
 .upload-drop > table .column3{width:20%}
 .uploader{background:#fff;position:absolute;bottom:0;right:20px;padding:10px 10px 0;border-radius:10px 10px 0 0;}
 .uploader header{height:16px;padding-bottom:10px;}
-.uploader header .title{float:left}
+.uploader header .title{float:left;margin-right:20px}
 .uploader header .count-holder{float:right}
 .uploader ul{max-height:150px;overflow-y:auto;padding-bottom:10px}
 .uploader li{height:30px;line-height:30px;font-size:.8em;padding:3px 0;}
 .uploader li img{width:30px;height:30px;display:block;float:left}
-.uploader li div{float:left;width:150px;padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uploader li .name{float:left;width:150px;padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uploader li .progress{clear:both;height:2px;width:0%;background:#008000}
 .uploader li:nth-child(odd){background:#f0f0f0}

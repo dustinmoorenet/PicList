@@ -73,8 +73,10 @@ html
     width 100%
     height 100%
     border-spacing 20px
+    border-collapse separate
 
     .drop
+      vertical-align: middle;
       border solid 10px rgba(255,255,255,0.5)
       border-radius 6px 6px
 
@@ -113,6 +115,7 @@ html
 
     .title
       float left
+      margin-right 20px
 
     .count-holder
       float right
@@ -134,11 +137,17 @@ html
       display block
       float left
 
-    div 
+    .name
       float left
       width 150px
       padding-left 10px
       ellipsis()
+
+    .progress
+      clear both
+      height 2px
+      width 0%
+      background green
 
     &:nth-child(odd)
       background #f0f0f0

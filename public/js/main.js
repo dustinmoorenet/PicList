@@ -108,6 +108,53 @@ View.UploadDrop = Backbone.View.extend({
   },
 });
 
+View.UploaderItem = Backbone.View.extend({
+  className: 'uploader-item',
+
+  tagName: 'li',
+
+  template: _.template(
+    '<img src="<%= source %>" title="<%= name %>" />'
+  + '<div class="name"><%= name %></div>'
+  + '<div class="progress"></div>'
+  ),
+
+  initialize: function() {
+    this.model.on('change:percent_uploaded', this.updateProgress, this);
+    this.model.on('change:status', this.statusChange, this);
+    this.render();
+  },
+
+  render: function() {
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
+  },
+
+  remove: function() {
+    this.model.off('change:percent_uploaded', this.updateProgress, this);
+    this.model.off('change:status', this.statusChange, this);
+    this.model.collection.remove(this.model);
+    this.$el.remove();
+  },
+
+  updateProgress: function() {
+    this.$('.progress').css('width', (this.model.get('percent_uploaded') * 100) + '%');
+  },
+
+  statusChange: function() {
+    var status = this.model.get('status');
+
+    if (status == 'complete')
+      this.remove();
+    else if (status == 'error')
+      this.error();
+  },
+
+  error: function() {
+    this.$el.addClass('error');
+  }
+});
+
 View.Uploader = Backbone.View.extend({
   className: 'uploader',
 
@@ -119,18 +166,24 @@ View.Uploader = Backbone.View.extend({
   + '<ul></ul>'
   ),
 
-  itemTemplate: _.template(
-    '<li><img src="<%= source %>" title="<%= name %>" /><div><%= name %></div></li>'
-  ),
-
   initialize: function() {
     this.files_to_upload = new UploadFiles();
 
+    this.files_to_upload.on('add', this.uploadFile, this);
+    this.files_to_upload.on('remove', this.onRemove, this);
+
     this.render();
+
+    this.$el.hide();
   },
 
   render: function() {
     this.$el.html(this.template());
+  },
+
+  onRemove: function() {
+    if (this.files_to_upload.length == 0)
+      this.$el.hide();
   },
 
   attachFileSource: function(file_source) {
@@ -138,9 +191,10 @@ View.Uploader = Backbone.View.extend({
   },
 
   processFiles: function(evt) {
-console.log('processFiles: ', evt);
     var view = this,
         files = evt.files;
+
+    this.$el.show();
 
     // Loop through the FileList and render image files as thumbnails.
     files.forEach(function(file) {
@@ -156,11 +210,11 @@ console.log('processFiles: ', evt);
       // Closure to capture the file information.
       reader.onload = (function(theFile) {
         return function(e) {
-          // Render thumbnail.
-          view.$('ul').prepend(view.itemTemplate({
-            source: e.target.result,
-            name: theFile.name
-          }));
+          file.set('source', e.target.result);
+
+          var item_view = new View.UploaderItem({model: file});
+
+          view.$('ul').prepend(item_view.el);
 
           view.$('.count').html(view.$('li').length);
         };
@@ -170,10 +224,47 @@ console.log('processFiles: ', evt);
       reader.readAsDataURL(f);
     });
     this.files_to_upload.add(files);
+  },
 
-console.log('got files from file source');
-  }
-}, Backbone.Events);
+  uploadFile: function(file) {
+      var formData = new FormData();
+  
+      formData.append(file.get('name'), file.get('file'));
+  
+      $.ajax({
+        url: '/photo',  //server script to process data
+        type: 'POST',
+        xhr: function() {  // custom xhr
+          myXhr = $.ajaxSettings.xhr();
+          if (myXhr.upload) { // check if upload property exists
+            // for handling the progress of the upload
+            myXhr.upload.addEventListener('progress', function(evt) {
+              if(evt.lengthComputable){
+                file.set('percent_uploaded', evt.loaded / evt.total);
+              }
+            }, false);
+          }
+          return myXhr;
+        },
+        //Ajax events
+        beforeSend: function() {
+          file.set('status', 'uploading');
+        },
+        success: function() {
+          file.set('status', 'complete');
+        },
+        error: function() {
+          file.set('status', 'error');
+        },
+        // Form data
+        data: formData,
+        //Options to tell JQuery not to process data or worry about content-type
+        cache: false,
+        contentType: false,
+        processData: false
+      });
+  },
+});
 
 View.Main = Backbone.View.extend({
   className: 'main',
@@ -203,7 +294,6 @@ View.Main = Backbone.View.extend({
   },
 
   handleDragEnter: function() {
-console.log('handleDragEnter');
     this.upload_drop.show();
   },
 });
@@ -223,36 +313,6 @@ $(function() {
 
   main.render();
 });
-
-function uploadFiles(evt) {
-  var formData = new FormData();
-
-  for (var i = 0, file; file = files_to_upload[i]; ++i) {
-    formData.append(file.name, file);
-  }
-
-  $.ajax({
-    url: '/photo',  //server script to process data
-    type: 'POST',
-    xhr: function() {  // custom xhr
-        myXhr = $.ajaxSettings.xhr();
-        if(myXhr.upload){ // check if upload property exists
-            myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // for handling the progress of the upload
-        }
-        return myXhr;
-    },
-    //Ajax events
-    //beforeSend: beforeSendHandler,
-    success: completeHandler,
-    //error: errorHandler,
-    // Form data
-    data: formData,
-    //Options to tell JQuery not to process data or worry about content-type
-    cache: false,
-    contentType: false,
-    processData: false
-  });
-}
 
 function handleFileInputChange(evt) {
   var files = evt.target.files; // FileList object
@@ -280,9 +340,6 @@ function addPhoto(photo) {
 }
 
 function progressHandlingFunction(e){
-  if(e.lengthComputable){
-    $('progress').attr({value:e.loaded,max:e.total});
-  }
 }
 
 function completeHandler(e) {
