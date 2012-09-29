@@ -204,7 +204,7 @@ View.UploaderItem = Backbone.View.extend({
 
     switch (status) {
       case 'complete':
-        //this.remove();
+        this.remove();
         break;
       case 'error':
         this.error();
@@ -249,7 +249,6 @@ View.Uploader = Backbone.View.extend({
   },
 
   itemRemoved: function() {
-console.log('item removed');
     if (this.collection.length == 0)
       this.$el.hide();
 
@@ -276,7 +275,8 @@ console.log('item removed');
   },
 
   uploadItem: function(upload_set) {
-    var formData = new FormData();
+    var view = this,
+        formData = new FormData();
   
     var files = upload_set.get('files');
 
@@ -305,6 +305,7 @@ console.log('item removed');
       },
       success: function() {
         upload_set.set('status', 'complete');
+        view.trigger('upload_complete');
       },
       error: function() {
         upload_set.set('status', 'error');
@@ -365,6 +366,10 @@ View.PhotoList = Backbone.View.extend({
 View.PhotoListItem = Backbone.View.extend({
   className: 'photo-list-item',
 
+  events: {
+    'click': 'clicked'
+  },
+
   template: _.template(
     '<img src="/photo/thumb/<%= id %>" />'
   ),
@@ -380,7 +385,9 @@ View.PhotoListItem = Backbone.View.extend({
     return this;
   },
 
-  
+  clicked: function() {
+    this.$el.toggleClass('selected');
+  }
 });
 
 View.Main = Backbone.View.extend({
@@ -408,10 +415,22 @@ View.Main = Backbone.View.extend({
       view.handleDragEnter(); }, false);
     
     this.uploader.attachFileSource(this.upload_drop);
+
+    this.uploader.on('upload_complete', this.photo_list.getPhotos, this.photo_list);
   },
 
   render: function() {
     this.upload_drop.render();
+
+    YesNo({
+      message: 'Are you sure?',
+      onYes: function() {
+        console.log('you clicked yes');
+      },
+      onNo: function() {
+        console.log('you clicked no');
+      }
+    });
   },
 
   handleDragEnter: function() {

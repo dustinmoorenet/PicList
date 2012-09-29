@@ -1,0 +1,48 @@
+.base-modal
+  position absolute
+  display table
+  top 0
+  left 0
+  width 100%
+  height 100%
+  background rgba(0,0,0,.75)
+
+  .wrap
+    width 100%
+    height 100%
+    display table-cell
+    vertical-align middle
+    text-align center
+
+    .content
+      display inline-block
+
+.message
+  background lightgray
+  padding 10px
+  border-radius 10px
+  min-width 200px
+
+  > header
+    text-align left
+
+  .content
+    padding 10px 0
+    font-size .8em
+
+  .buttons
+    text-align right
+
+    .btn
+      display inline-block
+      margin-left 10px
+      &:first-child
+        margin-left 0
+
+.btn
+  background darkgray
+  color white
+  padding 5px 10px
+  font-weight bold
+  cursor default
+  border-radius 4px

@@ -28,4 +28,6 @@ html{font-family:sans-serif}
 .uploader li .progress{clear:both;height:2px;width:0%;background:#008000}
 .uploader li:nth-child(odd){background:#f0f0f0}
 .photo-list{width:100%;height:100%;overflow-y:auto}
-.photo-list-item{float:left;padding:10px;margin:20px;background:#fff}
+.photo-list-item{float:left;padding:10px;margin:20px;background:#fff;}
+.photo-list-item:hover{padding:12px;margin:18px;box-shadow:0 2px 5px 3px rgba(0,0,0,0.4)}
+.photo-list-item.selected{background:#ff0}
