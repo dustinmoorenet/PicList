@@ -46,6 +46,26 @@ ellipsis()
   overflow hidden
   text-overflow ellipsis
 
+input[type="text"]
+  height 25px
+  padding 0 0 0 5px
+  margin 0
+  border 0
+  border-radius 5px
+  &:focus
+    outline 0
+
+.btn
+  background #0000ff
+  color white
+  padding 5px 10px
+  font-weight bold
+  cursor default
+  border-radius 5px
+
+  &:hover
+    background #0000dd
+
 html
   font-family sans-serif
 
@@ -157,7 +177,12 @@ html
   height 100%
   overflow-y auto
 
+  .fake-padding
+    height 35px
+    width 100%
+
 .photo-list-item
+  position relative
   float left
   padding 10px
   margin 20px
@@ -168,6 +193,33 @@ html
     margin 18px
     box-shadow 0px 2px 5px 3px rgba(0,0,0,0.4);
 
+    .icon
+      display block
+
   &.selected
     background yellow
+
+  img
+    display block
+
+  .icon
+    display none
+    position absolute
+    right 15px
+    width 25px
+    height 25px
+
+    &:hover
+      background-color rgba(255,255,255,.5);
+      border-radius 5px
+
+  .expand.icon
+    top 15px
+    background-image url('/img/expand.png')
+
+  .info.icon
+    bottom 15px
+    background-image url('/img/info.png')
+    height 24px
+    width 24px
 

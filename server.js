@@ -26,6 +26,8 @@ function compileMethod(str) {
  
 app.use(express.static(__dirname + '/public'));
 
+app.use(express.bodyParser());
+
 app.get('/photos', function(req, res) {
   new Photos().all(function(err, photos) {
     if (!err)
@@ -98,6 +100,25 @@ app.post('/photo', function(req, res) {
      
   form.parse(req)
 
+});
+
+app.post('/tag/add', function(req, res) {
+  var items = req.param('items') || [],
+      tags = req.param('tags') || [],
+      finished_count = 0,
+      photos = [];
+
+  items.forEach(function(item) {
+    var photo = new Photo(item, function(err) {
+      photos.push(photo.document);
+
+      photo.addTags(tags, function(err) {
+        finished_count++;
+        if (finished_count == items.length)
+          res.json(photos);
+      });
+    });
+  });
 });
  
 app.listen(3000);

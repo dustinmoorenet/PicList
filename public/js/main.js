@@ -33,6 +33,8 @@ Collection.Files = Backbone.Collection.extend({
   model: Model.File 
 });
 
+var message = _.clone(Backbone.Events);
+
 var View = {};
 
 View.UploadDrop = Backbone.View.extend({
@@ -323,7 +325,13 @@ View.Uploader = Backbone.View.extend({
 View.PhotoList = Backbone.View.extend({
   className: 'photo-list',
 
+  template: _.template(
+    '<div class="fake-padding"></div>'
+  ),
+
   initialize: function() {
+    message.on('addtags', this.addTags, this);
+
     this.collection = new Collection.Photos();
 
     this.collection.on('reset', this.render, this);
@@ -335,6 +343,8 @@ View.PhotoList = Backbone.View.extend({
   render: function() {
     var view = this;
 
+    this.$el.html(this.template());
+
     this.clearPhotos();
   
     this.collection.each(function(photo) {
@@ -344,6 +354,8 @@ View.PhotoList = Backbone.View.extend({
 
   remove: function() {
     this.$el.remove();
+
+    message.off('addtags', this.addTag, this);
 
     this.collection.off('reset', this.onReset, this);
     this.collection.off('add', this.addPhoto, this);
@@ -360,6 +372,26 @@ View.PhotoList = Backbone.View.extend({
   
   getPhotos: function() {
     this.collection.fetch({add: true, url: '/photos/'});
+  },
+
+  addTags: function(tags) {
+    var view = this,
+        item_ids = [];
+
+    this.collection.each(function(item) {
+      if (item.get('selected'))
+        item_ids.push(item.id);
+    });    
+
+    if (item_ids.length == 0)
+      return;
+
+    $.post('/tag/add', { tags: tags, items: item_ids }, function(items) {
+      items.forEach(function(item) {
+        view.collection.get(item.id).set(item);
+      });
+      message.trigger('update_filter');
+    });
   }
 });
 
@@ -367,11 +399,15 @@ View.PhotoListItem = Backbone.View.extend({
   className: 'photo-list-item',
 
   events: {
-    'click': 'clicked'
+    'click': 'select',
+    'click .expand.icon': 'expand',
+    'click .info.icon': 'displayInfo',
   },
 
   template: _.template(
     '<img src="/photo/thumb/<%= id %>" />'
+  + '<div class="icon expand"></div>'
+  + '<div class="icon info"></div>'
   ),
 
   initialize: function() {
@@ -385,8 +421,19 @@ View.PhotoListItem = Backbone.View.extend({
     return this;
   },
 
-  clicked: function() {
+  select: function(evt) {
+    if (this.$('.icon').is(evt.target))
+      return;
+
     this.$el.toggleClass('selected');
+    this.model.set('selected', this.$el.hasClass('selected'));
+  },
+
+  expand: function() {
+    var full_photo = new View.FullPhoto({model: this.model});
+  },
+
+  displayInfo: function() {
   }
 });
 
@@ -417,20 +464,13 @@ View.Main = Backbone.View.extend({
     this.uploader.attachFileSource(this.upload_drop);
 
     this.uploader.on('upload_complete', this.photo_list.getPhotos, this.photo_list);
+
+    this.toolbar = new View.Toolbar();
+    this.$el.append(this.toolbar.el);
   },
 
   render: function() {
     this.upload_drop.render();
-
-    YesNo({
-      message: 'Are you sure?',
-      onYes: function() {
-        console.log('you clicked yes');
-      },
-      onNo: function() {
-        console.log('you clicked no');
-      }
-    });
   },
 
   handleDragEnter: function() {

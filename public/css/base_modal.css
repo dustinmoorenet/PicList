@@ -7,4 +7,3 @@
 .message .buttons{text-align:right;}
 .message .buttons .btn{display:inline-block;margin-left:10px;}
 .message .buttons .btn:first-child{margin-left:0}
-.btn{background:#a9a9a9;color:#fff;padding:5px 10px;font-weight:bold;cursor:default;border-radius:4px}
