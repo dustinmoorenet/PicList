@@ -18,3 +18,25 @@ exec { "get_git_repo":
   command => "sudo -u dustin git clone https://github.com/dustinmoorenet/PicList.git /home/dustin/PicList",
   unless => 'test -d /home/dustin/PicList'
 }
+
+# NodeJS
+package { 'build-essential':
+  ensure => present
+}
+
+package { 'python':
+  ensure => present
+}
+
+package { 'libssl-dev':
+  ensure => present
+}
+
+package { 'pkg-config':
+  ensure => present
+}
+
+exec { 'compile_nodejs':
+  command => 'sh /home/dustin/PicList/conf/build/nodejs.sh',
+  unless => 'test -f /usr/local/bin/node'
+}
