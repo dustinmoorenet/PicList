@@ -19,3 +19,4 @@ puppet apply dev.pp
 
 # Clean up
 export DEBIAN_FRONTEND=dialog
+rm dev.pp puppetlabs-release-precise.deb
