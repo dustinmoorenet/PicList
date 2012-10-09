@@ -20,23 +20,33 @@ exec { "get_git_repo":
 }
 
 # NodeJS
-package { 'build-essential':
-  ensure => present
-}
-
-package { 'python':
-  ensure => present
-}
-
-package { 'libssl-dev':
-  ensure => present
-}
-
-package { 'pkg-config':
+package { [ 'build-essential',
+            'python',
+            'libssl-dev',
+            'pkg-config' ] :
   ensure => present
 }
 
 exec { 'compile_nodejs':
   command => 'sh /home/dustin/PicList/conf/build/nodejs.sh',
   unless => 'test -f /usr/local/bin/node'
+}
+
+# CouchDB
+package { [ 'g++',
+          'erlang-base',
+          'erlang-dev',
+          'erlang-eunit',
+          'erlang-nox',
+          'libmozjs185-dev',
+          'libicu-dev',
+          'libcurl4-gnutls-dev',
+          'libtool',
+          'curl' ] :
+  ensure => present
+}
+
+exec { 'compile_couchdb':
+  command => 'sh /home/dustin/PicList/conf/build/couchdb.sh',
+  unless => 'test -f /usr/local/bin/couchdb'
 }
