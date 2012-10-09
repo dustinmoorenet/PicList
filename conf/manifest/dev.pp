@@ -46,6 +46,11 @@ package { [ 'g++',
   ensure => present
 }
 
+# ImageMagick
+package { 'imagemagick':
+  ensure => present
+}
+
 exec { 'compile_couchdb':
   command => 'sh /home/dustin/PicList/conf/build/couchdb.sh',
   unless => 'test -f /usr/local/bin/couchdb'
