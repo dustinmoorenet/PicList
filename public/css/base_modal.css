@@ -1,6 +1,7 @@
 .base-modal{position:absolute;display:table;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);}
-.base-modal .wrap{width:100%;height:100%;display:table-cell;vertical-align:middle;text-align:center;}
-.base-modal .wrap .content{display:inline-block}
+.base-modal .vertical-center{width:100%;height:100%;display:table-cell;vertical-align:middle;}
+.base-modal .vertical-center .horizontal-center-outer{position:relative;float:right;right:50%;}
+.base-modal .vertical-center .horizontal-center-outer .horizontal-center-inner{position:relative;float:right;right:-50%}
 .message{background:#d3d3d3;padding:10px;border-radius:10px;min-width:200px;}
 .message > header{text-align:left}
 .message .content{padding:10px 0;font-size:.8em}

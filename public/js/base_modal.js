@@ -2,7 +2,13 @@ View.BaseModal = Backbone.View.extend({
   className: 'base-modal',
 
   template: _.template(
-    '<div class="wrap"><div class="content"></div></div>'
+    '<div class="vertical-center">'
+  + '  <div class="horizontal-center-outer">'
+  + '    <div class="horizontal-center-inner">'
+  + '    </div>'
+  + '  </div>'
+  + '  <div class="clear-both"></div>'
+  + '</div>'
   ),
 
   initialize: function() {
@@ -15,7 +21,7 @@ View.BaseModal = Backbone.View.extend({
   },
 
   html: function(html) {
-    this.$('> .wrap .content').html(html);
+    this.$('.horizontal-center-inner').html(html);
   }
 });
 

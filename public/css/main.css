@@ -9,6 +9,7 @@ input[type="text"]{height:25px;padding:0 0 0 5px;margin:0;border:0;border-radius
 input[type="text"]:focus{outline:0}
 .btn{background:#00f;color:#fff;padding:5px 10px;font-weight:bold;cursor:default;border-radius:5px;}
 .btn:hover{background:#00d}
+.clear-both{clear:both}
 html{font-family:sans-serif}
 .main{position:absolute;top:0;left:0;height:100%;width:100%;background:#808080}
 .upload-drop{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:.75;color:#fff;text-align:center;}
