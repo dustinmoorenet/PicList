@@ -13,5 +13,9 @@ dpkg -i puppetlabs-release-precise.deb
 # Install puppet
 apt-get -y install puppet
 
+wget https://raw.github.com/dustinmoorenet/PicList/master/conf/manifest/dev.pp
+
+puppet apply dev.pp
+
 # Clean up
 export DEBIAN_FRONTEND=dialog
