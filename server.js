@@ -3,7 +3,6 @@
 */
  
 var express = require('express'),
-    formidable = require('formidable'),
     stylus = require('stylus'),
     fs = require('fs'),
     Photo = require('./lib/photo').Photo;
@@ -72,34 +71,17 @@ app.get('/photo/thumb/:id?', function(req, res) {
 });
 
 app.post('/photo', function(req, res) {
+  var finished_count = 0,
+      file_names = Object.keys(req.files);
 
-  var form = formidable.IncomingForm(),
-      util = require('util'),
-      fields = [],
-      files = [],
-      i = 0;
-
-  form.on('file', function(field, file) {
-    console.log(field, file)
-    files.push([field, file])
-  })
-  .on('end', function() {
-    console.log('at the end');
-    console.log(util.inspect(files))
-    var finished_count = 0
-    files.forEach(function(file) {
-      var photo = new Photo();
-      photo.create(file[1], function(err) {
-        console.log('did we get an error?: ', err);
-        finished_count++;
-        if (finished_count == files.length)
-          res.send('');
-      });
+  file_names.forEach(function(file_name) {
+    var photo = new Photo();
+    photo.create(req.files[file_name], function(err) {
+      finished_count++;
+      if (finished_count == file_names.length)
+        res.send('');
     });
-  })
-     
-  form.parse(req)
-
+  });
 });
 
 app.post('/tag/add', function(req, res) {
