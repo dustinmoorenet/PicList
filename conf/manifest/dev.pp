@@ -1,4 +1,4 @@
-Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
+Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin" ] }
 
 class git_setup {
   package { 'git':
@@ -33,6 +33,21 @@ class nodejs {
     command => 'sh /home/dustin/PicList/conf/build/nodejs.sh',
     unless => 'test -f /usr/local/bin/node',
     timeout => 0
+  } ->
+
+  file { '/etc/init/http_server.conf':
+    ensure => present,
+    source => '/home/dustin/PicList/conf/init/http_server.conf'
+  } ->
+  
+  file { '/etc/init.d/http_server':
+    ensure => link,
+    target => '/lib/init/upstart-job'
+  } ->
+
+  service { 'http_server':
+    ensure => 'running',
+    provider => 'upstart',
   }
 }
 
@@ -53,12 +68,35 @@ class couchdb {
     ensure => present,
     before => Exec['compile_couchdb']
   }
-  
+
   exec { 'compile_couchdb':
     command => 'sh /home/dustin/PicList/conf/build/couchdb.sh',
     unless => 'test -f /usr/local/bin/couchdb',
     timeout => 0
+  } ->
+
+  file { '/etc/init/couchdb.conf':
+    ensure => present,
+    source => '/home/dustin/PicList/conf/init/couchdb.conf'
+  } ->
+  
+  file { '/etc/init.d/couchdb':
+    ensure => link,
+    target => '/lib/init/upstart-job'
+  } ->
+
+  service { 'couchdb':
+    ensure => 'running',
+    provider => 'upstart',
   }
+}
+
+# Init
+class init {
+  exec { 'build_photo_db':
+    command => 'node /home/dustin/PicList/init.js',
+    unless => 'test $(curl -sX GET http://localhost:5984/photos) != \'{"error":"not_found","reason":"no_db_file"}\''
+  }  
 }
 
 # ImageMagick
@@ -68,5 +106,5 @@ package { 'imagemagick':
 
 class { 'git_setup': } ->
 class { 'nodejs': } ->
-class { 'couchdb': }
-
+class { 'couchdb': } ->
+class { 'init': }
