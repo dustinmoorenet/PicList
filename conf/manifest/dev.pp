@@ -95,7 +95,7 @@ class couchdb {
 class init {
   exec { 'build_photo_db':
     command => 'node /home/dustin/PicList/init.js',
-    unless => 'test $(curl -sX GET http://localhost:5984/photos) != \'{"error":"not_found","reason":"no_db_file"}\''
+    unless => 'test $(curl -sX GET http://localhost:5984/photos) != \'{"error":"not_found","reason":"no_db_file"}\'',
   }  
 }
 
