@@ -35,6 +35,12 @@ class nodejs {
     timeout => 0
   } ->
 
+  exec { 'install_nodeunit':
+    command => 'sh /home/dustin/PicList/conf/build/nodeunit.sh',
+    unless => 'test -f /usr/local/bin/nodeunit',
+    timeout => 0
+  } ->
+
   file { '/etc/init/http_server.conf':
     ensure => present,
     source => '/home/dustin/PicList/conf/init/http_server.conf'
