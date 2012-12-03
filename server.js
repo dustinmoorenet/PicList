@@ -5,8 +5,8 @@
 var express = require('express'),
     stylus = require('stylus'),
     fs = require('fs'),
-    Photo = require('./lib/photo').Photo;
-    Photos = require('./lib/photos').Photos;
+    Photo = require('./lib/photo'),
+    Photos = require('./lib/photos');
  
 var app = express();
  
