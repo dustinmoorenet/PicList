@@ -402,12 +402,14 @@ View.PhotoListItem = Backbone.View.extend({
     'click': 'select',
     'click .expand.icon': 'expand',
     'click .info.icon': 'displayInfo',
+    'click .trash.icon': 'delete',
   },
 
   template: _.template(
     '<img src="/photo/thumb/<%= id %>" />'
   + '<div class="icon expand"></div>'
   + '<div class="icon info"></div>'
+  + '<div class="icon trash"></div>'
   ),
 
   initialize: function() {
@@ -419,6 +421,10 @@ View.PhotoListItem = Backbone.View.extend({
     this.$el.html(this.template(this.model.toJSON()));
 
     return this;
+  },
+
+  remove: function() {
+    this.$el.remove();
   },
 
   select: function(evt) {
@@ -434,6 +440,10 @@ View.PhotoListItem = Backbone.View.extend({
   },
 
   displayInfo: function() {
+  },
+
+  delete: function() {
+    this.model.destroy({ success: _.bind(this.remove, this) });
   }
 });
 

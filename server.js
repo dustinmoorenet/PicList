@@ -84,6 +84,20 @@ app.post('/photo', function(req, res) {
   });
 });
 
+app.delete('/photo/:id?', function(req, res) {
+  var photo = new Photo(req.params.id, function(err) {
+    photo.delete(function(err) {
+      if (err) {
+        res.status(500);
+      } else {
+        res.status(204);
+      }
+
+      res.send('');
+    });
+  });
+});
+
 app.post('/tag/add', function(req, res) {
   var items = req.param('items') || [],
       tags = req.param('tags') || [],
