@@ -36,8 +36,11 @@ app.get('/photos', function(req, res) {
   });
 });
 
-app.get('/photo', function(req, res) {
-  res.json(['hey']);
+app.get('/photo/:id?', function(req, res) {
+  var photo = new Photo(req.params.id, function(err) {
+    res.status(200);
+    res.json(photo.properties());
+  });
 });
 
 app.get('/photo/original/:id?', function(req, res) {

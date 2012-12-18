@@ -116,6 +116,9 @@ View.PhotoList.prototype.PhotoListItem = Backbone.View.extend({
   },
 
   displayInfo: function() {
+    new View.PhotoForm({
+      model: this.model
+    });
   },
 
   delete: function() {
