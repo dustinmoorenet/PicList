@@ -1,0 +1,40 @@
+View.Main = Backbone.View.extend({
+  className: 'main',
+
+  events: {
+  },
+
+  initialize: function() {
+    this.photo_list = new View.PhotoList();
+
+    this.$el.append(this.photo_list.el);
+
+    this.upload_drop = new View.UploadDrop();
+
+    this.$el.append(this.upload_drop.el);
+
+    this.uploader = new View.Uploader();
+
+    this.$el.append(this.uploader.el);
+
+    $('body').get(0).addEventListener('dragenter', this.handleDragEnter.bind(this), false);
+    
+    this.uploader.attachFileSource(this.upload_drop);
+
+    this.uploader.on('upload_complete', this.photo_list.getPhotos, this.photo_list);
+
+    this.toolbar = new View.Toolbar();
+
+    this.$el.append(this.toolbar.el);
+  },
+
+  render: function() {
+    this.upload_drop.render();
+  },
+
+  handleDragEnter: function() {
+    this.upload_drop.show();
+  },
+});
+
+
