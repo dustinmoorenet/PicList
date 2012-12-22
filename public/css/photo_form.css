@@ -1,8 +1,10 @@
 .photo-form{background:#808080;border-top-left-radius:20px;border-bottom-right-radius:5px;border-bottom-left-radius:5px;border-top-right-radius:5px;}
 .photo-form header{padding:0 10px;margin-bottom:10px;line-height:36px;height:36px;background:#fff;border-top-left-radius:20px;border-top-right-radius:5px;}
-.photo-form header .title{float:left}
+.photo-form header .title{float:left;text-transform:uppercase;font-weight:bold}
 .photo-form header .close.icon{float:right;background-color:#d3d3d3;background-image:url("/img/close.png");width:25px;height:25px;margin-top:5px;border-radius:5px;background-color:rgba(0,0,0,0.3);}
 .photo-form header .close.icon:hover{background-color:rgba(0,0,0,0.1)}
-.photo-form .info{clear:both;float:left;padding:0 10px}
+.photo-form .info{clear:both;float:left;padding:0 10px;min-width:300px;max-width:500px;}
+.photo-form .info label{text-transform:uppercase;font-size:.8em;color:#fff;text-shadow:-1px 1px 0 #000}
+.photo-form .info .text{font-size:1.2em;margin:5px 0 20px}
 .photo-form .preview{float:right;background:#fff;padding:10px;margin:0 10px}
 .photo-form footer{clear:both;padding:10px}

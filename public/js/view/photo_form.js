@@ -13,15 +13,15 @@ View.PhotoForm = Backbone.View.extend({
   + '<div class="info">'
   + '  <div class="row">'
   + '    <label>File Name</label>'
-  + '    <div class="file-name"><%= file_name %></div>'
+  + '    <div class="text file-name"><%= m.file_name %></div>'
   + '  </div>'
-  + '  <div class="row">'
+  + '  <div class="row" <%= m.original_date_time ? "" : "hidden" %> >'
   + '    <label>Date Created</label>'
-  + '    <div class="date-created"></div>'
+  + '    <div class="text date-created"><%= m.original_date_time %></div>'
   + '  </div>'
   + '</div>'
   + '<div class="preview">'
-  + '  <img src="/photo/thumb/<%= id %>"/>'
+  + '  <img src="/photo/thumb/<%= m.id %>"/>'
   + '</div>'
   + '<footer></footer>'
   ),
@@ -31,7 +31,7 @@ View.PhotoForm = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(this.template({ m: this.model.toJSON() }));
 
     this.modal = new View.BaseModal();
 
