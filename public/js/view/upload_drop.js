@@ -74,7 +74,7 @@ View.UploadDrop = Backbone.View.extend({
       });
     });
 
-    this.trigger('received_files', {upload_set: upload_set});
+    message.trigger('received_files', {upload_set: upload_set});
   },
 
   handleDragEnter: function(evt) {

@@ -15,6 +15,8 @@ View.Uploader = Backbone.View.extend({
     this.collection.on('add', this.uploadItem, this);
     this.collection.on('remove', this.itemRemoved, this);
 
+    message.on('received_files', this.processItem, this);
+
     this.render();
 
     this.$el.hide();
@@ -33,10 +35,6 @@ View.Uploader = Backbone.View.extend({
       this.$el.hide();
 
     this.renderCount();
-  },
-
-  attachFileSource: function(file_source) {
-    file_source.on('received_files', this.processItem, this);
   },
 
   processItem: function(evt) {

@@ -1,4 +1,10 @@
-.toolbar{position:absolute;top:0;left:0;width:100%;height:35px;box-shadow:0 2px 5px 3px rgba(0,0,0,0.4);background:#808080}
+.toolbar{position:absolute;top:0;left:0;width:100%;height:35px;box-shadow:0 2px 5px 3px rgba(0,0,0,0.4);background:#808080;}
+.toolbar .add-tag{float:left}
+.toolbar .upload-dialog{float:right;margin:5px 5px 0 0}
 .add-tag{height:35px;padding:5px 0 0 10px;}
-.add-tag .icon{float:left;background-image:url("/img/add.png");width:25px;height:25px;margin-right:5px;padding:0}
+.add-tag .add{float:left;background-image:url("/img/add.png");width:25px;height:25px;margin-right:5px;padding:0}
 .add-tag input{display:block;float:left}
+.upload-dialog{position:relative;width:25px;height:25px;overflow:hidden;}
+.upload-dialog .icon.upload{float:right;width:25px;height:25px;border-radius:5px;background-color:rgba(0,0,0,0.3);background-image:url("/img/upload.png")}
+.upload-dialog input{position:absolute;top:0;left:0;opacity:0}
+.upload-dialog:hover .icon.upload{background-color:rgba(0,0,0,0.1)}

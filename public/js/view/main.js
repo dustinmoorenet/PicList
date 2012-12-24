@@ -19,8 +19,6 @@ View.Main = Backbone.View.extend({
 
     $('body').get(0).addEventListener('dragenter', this.handleDragEnter.bind(this), false);
     
-    this.uploader.attachFileSource(this.upload_drop);
-
     this.uploader.on('upload_complete', this.photo_list.getPhotos, this.photo_list);
 
     this.toolbar = new View.Toolbar();
