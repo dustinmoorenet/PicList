@@ -1,7 +1,3 @@
-var Model = {};
-var Collection = {};
-var View = {};
-
 var message = _.clone(Backbone.Events);
 
 var main;

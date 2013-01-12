@@ -1,8 +1,10 @@
+/**
+ * The main application view
+ * 
+ * This view holds all elements of the application
+ */
 View.Main = Backbone.View.extend({
   className: 'main',
-
-  events: {
-  },
 
   initialize: function() {
     this.photo_list = new View.PhotoList();
