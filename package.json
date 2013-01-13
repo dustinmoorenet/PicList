@@ -8,6 +8,7 @@
     "express": "",
     "stylus": "",
     "imagemagick": "",
-    "expect.js": ""
+    "expect.js": "",
+    "sinon": ""
   }
 }

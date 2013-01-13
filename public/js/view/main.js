@@ -7,9 +7,16 @@ View.Main = Backbone.View.extend({
   className: 'main',
 
   initialize: function() {
+  },
+
+  render: function() {
     this.photo_list = new View.PhotoList();
 
     this.$el.append(this.photo_list.el);
+
+    this.toolbar = new View.Toolbar();
+
+    this.$el.append(this.toolbar.el);
 
     this.upload_drop = new View.UploadDrop();
 
@@ -23,12 +30,6 @@ View.Main = Backbone.View.extend({
     
     this.uploader.on('upload_complete', this.photo_list.getPhotos, this.photo_list);
 
-    this.toolbar = new View.Toolbar();
-
-    this.$el.append(this.toolbar.el);
-  },
-
-  render: function() {
     this.upload_drop.render();
   },
 
