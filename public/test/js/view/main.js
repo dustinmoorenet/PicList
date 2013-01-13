@@ -26,7 +26,7 @@ describe('Main view', function() {
     mock.verify();
   });
 
-  it('waits for file drag', function() {
+  it('displays upload_drop when a file is dragged', function() {
 
     this.view.render();
 
