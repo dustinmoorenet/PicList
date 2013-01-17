@@ -1,0 +1,60 @@
+.photo-list
+  width 100%
+  height 100%
+  overflow-y auto
+
+  .fake-padding
+    height 35px
+    width 100%
+
+.photo-list > .item
+  position relative
+  float left
+  padding 10px
+  margin 20px
+  background white
+
+  &:hover
+    padding 12px
+    margin 18px
+    box-shadow 0px 2px 5px 3px rgba(0,0,0,0.4);
+
+    .icon
+      display block
+
+  &.selected
+    background yellow
+
+    .icon
+      display block
+
+  img
+    display block
+
+  .icon
+    display none
+    position absolute
+    width 25px
+    height 25px
+    border-radius 5px
+    background-color rgba(0,0,0,.3);
+
+    &:hover
+      background-color rgba(0,0,0,.1);
+
+  .expand.icon
+    top 15px
+    right 15px
+    background-image url('/img/expand.png')
+
+  .info.icon
+    bottom 15px
+    right 15px
+    background-image url('/img/info.png')
+    height 24px
+    width 24px
+
+  .trash.icon
+    bottom 15px
+    left 15px
+    background-image url('/img/trash.png') 

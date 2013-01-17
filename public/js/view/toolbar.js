@@ -19,10 +19,15 @@ View.Toolbar = Backbone.View.extend({
 View.AddTag = Backbone.View.extend({
   className: 'add-tag',
 
-  events: {
-    'click .btn': 'open',
-    'blur input': 'close',
-    'keypress input': 'typing',
+  events: function() {
+    var events = {
+      'blur input': 'close',
+      'keypress input': 'typing',
+    };
+
+    events[Input.event + ' .btn'] = 'open';
+
+    return events;
   },
 
   template: _.template(
@@ -41,7 +46,7 @@ View.AddTag = Backbone.View.extend({
   },
 
   open: function() {
-    this.$('input').show().focus();
+    this.$('input').show();
   },
 
   close: function() {

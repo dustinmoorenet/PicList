@@ -1,8 +1,12 @@
 View.FullPhoto = Backbone.View.extend({
   className: 'full-photo',
 
-  events: {
-    'click .close.icon': 'close'
+  events: function() {
+    var events = {};
+
+    events[Input.event + ' .close.icon'] = 'close';
+
+    return events;
   },
 
   template: _.template(

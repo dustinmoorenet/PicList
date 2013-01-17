@@ -42,7 +42,7 @@ View.PhotoList = Backbone.View.extend({
   },
   
   addPhoto: function(photo) {
-    var item = new this.PhotoListItem({model: photo});
+    var item = new View.PhotoList.Item({model: photo});
     this.$el.append(item.el);
   },
   
@@ -71,14 +71,18 @@ View.PhotoList = Backbone.View.extend({
   }
 });
 
-View.PhotoList.prototype.PhotoListItem = Backbone.View.extend({
-  className: 'photo-list-item',
+View.PhotoList.Item = Backbone.View.extend({
+  className: 'item',
 
-  events: {
-    'click': 'select',
-    'click .expand.icon': 'expand',
-    'click .info.icon': 'displayInfo',
-    'click .trash.icon': 'delete',
+  events: function() {
+    var events = {};
+
+    events[Input.event] = 'select';
+    events[Input.event + ' .expand.icon'] = 'expand';
+    events[Input.event + ' .info.icon']   = 'displayInfo';
+    events[Input.event + ' .trash.icon']  = 'delete';
+
+    return events;
   },
 
   template: _.template(
@@ -104,6 +108,8 @@ View.PhotoList.prototype.PhotoListItem = Backbone.View.extend({
   },
 
   select: function(evt) {
+    evt.preventDefault();
+
     if (this.$('.icon').is(evt.target))
       return;
 
@@ -111,17 +117,23 @@ View.PhotoList.prototype.PhotoListItem = Backbone.View.extend({
     this.model.set('selected', this.$el.hasClass('selected'));
   },
 
-  expand: function() {
+  expand: function(evt) {
+    evt.preventDefault();
+
     var full_photo = new View.FullPhoto({model: this.model});
   },
 
-  displayInfo: function() {
+  displayInfo: function(evt) {
+    evt.preventDefault();
+
     new View.PhotoForm({
       model: this.model
     });
   },
 
-  delete: function() {
+  delete: function(evt) {
+    evt.preventDefault();
+
     this.model.destroy({ success: _.bind(this.remove, this) });
   }
 });
