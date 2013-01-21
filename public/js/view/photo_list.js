@@ -6,14 +6,11 @@ View.PhotoList = Backbone.View.extend({
   ),
 
   initialize: function() {
-    message.on('addtags', this.addTags, this);
+    photos = new Collection.Photos();
 
-    this.collection = new Collection.Photos();
-
-    this.collection.on('reset', this.render, this);
-    this.collection.on('add', this.addPhoto, this);
-
-    this.collection.fetch({url: '/photos/'});
+    this.listenTo(photos, 'reset', this.render);
+    this.listenTo(photos, 'add', this.addPhoto);
+    this.listenTo(message, 'addtags', this.addTags);
   },
 
   render: function() {
@@ -23,18 +20,7 @@ View.PhotoList = Backbone.View.extend({
 
     this.clearPhotos();
   
-    this.collection.each(function(photo) {
-      view.addPhoto(photo);
-    });
-  },
-
-  remove: function() {
-    this.$el.remove();
-
-    message.off('addtags', this.addTag, this);
-
-    this.collection.off('reset', this.onReset, this);
-    this.collection.off('add', this.addPhoto, this);
+    photos.forEach(this.addPhoto.bind(this));
   },
 
   clearPhotos: function() {
@@ -46,15 +32,11 @@ View.PhotoList = Backbone.View.extend({
     this.$el.append(item.el);
   },
   
-  getPhotos: function() {
-    this.collection.fetch({add: true, url: '/photos/'});
-  },
-
   addTags: function(tags) {
     var view = this,
         item_ids = [];
 
-    this.collection.each(function(item) {
+    photos.forEach(function(item) {
       if (item.get('selected'))
         item_ids.push(item.id);
     });    
@@ -64,7 +46,7 @@ View.PhotoList = Backbone.View.extend({
 
     $.post('/tag/add', { tags: tags, items: item_ids }, function(items) {
       items.forEach(function(item) {
-        view.collection.get(item.id).set(item);
+        photos.get(item.id).set(item);
       });
       message.trigger('update_filter');
     });
@@ -134,6 +116,6 @@ View.PhotoList.Item = Backbone.View.extend({
   delete: function(evt) {
     evt.preventDefault();
 
-    this.model.destroy({ success: _.bind(this.remove, this) });
+    this.model.destroy({ success: this.remove.bind(this) });
   }
 });

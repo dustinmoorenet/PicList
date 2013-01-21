@@ -28,7 +28,7 @@ View.Main = Backbone.View.extend({
 
     $('body').get(0).addEventListener('dragenter', this.handleDragEnter.bind(this), false);
     
-    this.uploader.on('upload_complete', this.photo_list.getPhotos, this.photo_list);
+    this.uploader.on('upload_complete', photos.refresh, photos);
 
     this.upload_drop.render();
   },
