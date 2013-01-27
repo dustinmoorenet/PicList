@@ -4,7 +4,6 @@
  
 var express = require('express'),
     stylus = require('stylus'),
-    fs = require('fs'),
     Photo = require('./lib/photo'),
     Photos = require('./lib/photos');
  

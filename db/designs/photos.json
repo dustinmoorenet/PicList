@@ -1,10 +1,12 @@
 {
   "_id": "_design/photos",
-  "_rev": "10-6e53f5a2c90a0980bc6639d9a862b074",
   "views": {
     "tags": {
-      "map":"function(doc) { if (doc.tags) { Object.keys(doc.tags).forEach(function(tag) { emit(tag, 1); }); } }",
+      "map": "function(doc) { if (doc.tags) { Object.keys(doc.tags).forEach(function(tag) { emit(tag, 1); }); } }",
       "reduce": "function(tag, counts) { var sum = 0; for(var i = 0; i < counts.length; i++) { sum += counts[i]; }; return sum; }"
+    },
+    "date_order": {
+      "map": "function(doc) {\n  if (doc.metadata.exif && doc.metadata.exif.dateTimeOriginal)\n    emit(doc.metadata.exif.dateTimeOriginal, doc);\n  else if (doc.upload_datetime)\n    emit(doc.upload_datetime);\n}"
     }
   }
 }
