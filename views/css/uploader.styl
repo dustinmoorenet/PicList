@@ -1,0 +1,50 @@
+.uploader
+  background white
+  position absolute
+  bottom 0
+  right 20px
+  padding 10px 10px 0
+  border-radius 10px 10px 0 0
+
+  header
+    height 16px
+    padding-bottom 10px
+
+    .title
+      float left
+      margin-right 20px
+
+    .count-holder
+      float right
+
+  ul
+    max-height 150px
+    overflow-y auto
+    padding-bottom 10px
+
+  li
+    height 30px
+    line-height 30px
+    font-size .8em
+    padding 3px 0
+
+    .icon
+      width 30px
+      height 30px
+      background grey
+      float left
+
+    .label
+      float left
+      width 150px
+      padding-left 10px
+      ellipsis()
+
+    .progress
+      clear both
+      height 2px
+      width 0%
+      background green
+
+    &:nth-child(odd)
+      background #f0f0f0

@@ -1,0 +1,10 @@
+.uploader{background:#fff;position:absolute;bottom:0;right:20px;padding:10px 10px 0;border-radius:10px 10px 0 0;}
+.uploader header{height:16px;padding-bottom:10px;}
+.uploader header .title{float:left;margin-right:20px}
+.uploader header .count-holder{float:right}
+.uploader ul{max-height:150px;overflow-y:auto;padding-bottom:10px}
+.uploader li{height:30px;line-height:30px;font-size:.8em;padding:3px 0;}
+.uploader li .icon{width:30px;height:30px;background:#808080;float:left}
+.uploader li .label{float:left;width:150px;padding-left:10px;}
+.uploader li .progress{clear:both;height:2px;width:0%;background:#008000}
+.uploader li:nth-child(odd){background:#f0f0f0}
