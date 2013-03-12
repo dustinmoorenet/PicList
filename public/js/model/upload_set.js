@@ -30,7 +30,7 @@ Model.UploadSet = Backbone.Model.extend({
     return $.ajax({
       url: '/photo',  //server script to process data
       type: 'POST',
-      xhr: this.customXhr.bind(this);
+      xhr: this.customXhr.bind(this),
       //Ajax events
       beforeSend: this.onBeforeSend.bind(this),
       success: this.onSuccess.bind(this),

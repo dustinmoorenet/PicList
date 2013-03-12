@@ -12,6 +12,9 @@ View.Toolbar = Backbone.View.extend({
     this.upload_dialog = new View.UploadDialog();
     this.$el.append(this.upload_dialog.el);
 
+    this.sort = new View.Toolbar.Sort();
+    this.$el.append(this.sort.el);
+
     return this;
   }
 });
