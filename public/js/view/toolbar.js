@@ -15,6 +15,9 @@ View.Toolbar = Backbone.View.extend({
     this.sort = new View.Toolbar.Sort();
     this.$el.append(this.sort.el);
 
+    this.filter = new View.Toolbar.Filter();
+    this.$el.append(this.filter.el);
+
     return this;
   }
 });
