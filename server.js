@@ -27,14 +27,17 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 
 app.get('/photos', function(req, res) {
-  var descending = req.query.descending == 'true';
+  var options = {
+    descending: req.query.descending == 'true',
+    tags: req.query.tags || []
+  }
 
   new Photos().all(function(err, photos) {
     if (!err)
       res.json(photos);
     else
       res.json([]);
-  }, descending);
+  }, options);
 });
 
 app.get('/photo/:id?', function(req, res) {

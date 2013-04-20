@@ -1,33 +1,32 @@
 Collection.Photos = Backbone.Collection.extend({
   model: Model.Photo,
 
+  url: function() {
+    var query = $.param(this.query_parts);
+    return '/photos/?' + query;
+  },
+
   initialize: function() {
+    this.query_parts = {};
+
     this.setSort(false);
   },
 
   refresh: function() {
-    this.fetch({update: true, url: this._url});
+    this.fetch();
   },
 
   setSort: function(descending) {
-    var query = '?descending=' + (descending ? 'true' : 'false');
+    this.query_parts.descending = !!descending;
 
-    this._url = '/photos/' + query;
-
-    this.fetch({url: this._url});
+    this.fetch({reset: true}); 
   },
 
   tagFilter: function(tags) {
     tags = _.uniq(tags);
 
-    tags = tags.map(function(tag) {
-      return 'tags[]=' + encodeURIComponent(tag);
-    });
+    this.query_parts.tags = tags;
 
-    var query = '?' + tags.join('&');
-
-    this._url = '/photos/' + query;
-
-    this.fetch({url: this._url});
+    this.fetch({reset: true}); 
   }
 });

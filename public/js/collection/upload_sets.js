@@ -2,7 +2,6 @@ Collection.UploadSets = Backbone.Collection.extend({
   model: Model.UploadSet,
 
   initialize: function() {
-
     message.on('received_files', this.processSet, this);
   },
 

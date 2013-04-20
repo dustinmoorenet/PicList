@@ -7,6 +7,7 @@ View.Main = Backbone.View.extend({
   className: 'main',
 
   initialize: function() {
+    this.upload_sets = new Collection.UploadSets();
   },
 
   render: function() {

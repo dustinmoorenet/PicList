@@ -46,7 +46,7 @@ View.PhotoList = Backbone.View.extend({
 
     $.post('/tag/add', { tags: tags, items: item_ids }, function(items) {
       items.forEach(function(item) {
-        photos.get(item.id).set(item);
+        photos.get(item._id).set('tags', item.tags);
       });
       message.trigger('update_filter');
     });
