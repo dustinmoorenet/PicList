@@ -5,7 +5,8 @@
 var express = require('express'),
     stylus = require('stylus'),
     Photo = require('./lib/photo'),
-    Photos = require('./lib/photos');
+    Photos = require('./lib/photos'),
+    session = require('./lib/session');
  
 var app = express();
  
@@ -25,6 +26,10 @@ function compileMethod(str) {
 app.use(express.static(__dirname + '/public'));
 
 app.use(express.bodyParser());
+
+app.use(express.cookieParser());
+
+app.use(session());
 
 app.get('/photos', function(req, res) {
   var options = {

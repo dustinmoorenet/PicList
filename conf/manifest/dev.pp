@@ -118,6 +118,18 @@ class couchdb {
   }
 }
 
+class mongodb {
+  exec { 'add_source':
+    command => 'sh /home/dustin/PicList/conf/build/mongodb.sh',
+    unless => 'test -f /etc/apt/sources.list.d/10gen.list',
+    timeout => 0
+  } ->
+
+  package { 'mongodb-10gen':
+    ensure => present
+  }
+}
+
 # Init
 class init {
   exec { 'build_photo_db':
@@ -134,4 +146,5 @@ package { 'imagemagick':
 class { 'git_setup': } ->
 class { 'nodejs': } ->
 class { 'couchdb': } ->
+class { 'mongodb': } ->
 class { 'init': }
