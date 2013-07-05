@@ -1,14 +1,17 @@
 {
   "name": "pic-list",
   "description": "PicList: photo website",
-  "version": "0.0.1",
+  "version": "0.3.5",
   "private": true,
+  "repository": {
+    "type" : "git",
+    "url" : "http://github.com/isaacs/npm.git"
+  },
   "dependencies": {
     "nano": "",
     "express": "",
     "stylus": "",
     "imagemagick": "",
-    "expect.js": "",
     "sinon": ""
   },
   "devDependencies": {

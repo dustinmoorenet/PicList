@@ -2,11 +2,11 @@
 
 cd /tmp
 
-wget -O node.tar.gz http://nodejs.org/dist/v0.8.11/node-v0.8.11.tar.gz
+wget -O node.tar.gz http://nodejs.org/dist/v0.10.12/node-v0.10.12.tar.gz
 
 tar -xzf node.tar.gz
 
-cd node-v0.8.11
+cd node-v0.10.12
 
 ./configure
 

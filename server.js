@@ -159,11 +159,11 @@ function loadRoutes() {
     });
   });
   
-  app.post('/user/signin', function(req, res) {
-    var username = req.param('username'),
+  app.post('/session/signin', function(req, res) {
+    var email = req.param('email'),
         password = req.param('password');
   
-    session.signIn(username, password, function() {
+    session.signIn(email, password, req, res, function(err, user) {
       if (err) {
         res.statusCode = 412;
         res.json(err);
@@ -173,11 +173,11 @@ function loadRoutes() {
     });
   });
    
-  app.post('/user/signout', function(req, res) {
+  app.post('/session/signout', function(req, res) {
     var session = req.session;
   
     if (session)
-      session.signOut();
+      session.signOut(req);
     else
       res.statusCode = 405;
 

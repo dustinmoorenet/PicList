@@ -57,11 +57,6 @@ class nodejs {
     source => '/usr/local/lib/node_modules/mocha/mocha.css'
   } ->
   
-  file { '/home/dustin/PicList/public/test/js/extern/expect.js':
-    ensure => present,
-    source => '/home/dustin/PicList/node_modules/expect.js/expect.js'
-  } ->
-  
   file { '/etc/init/http_server.conf':
     ensure => present,
     source => '/home/dustin/PicList/conf/init/http_server.conf'

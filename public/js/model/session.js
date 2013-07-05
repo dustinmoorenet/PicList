@@ -1,5 +1,5 @@
-Model.User = Backbone.Model.extend({
-  url: '/user',
+Model.Session = Backbone.Model.extend({
+  url: '/session',
 
   signIn: function(email, password) {
     $.ajax({
