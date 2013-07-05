@@ -6,128 +6,184 @@ var express = require('express'),
     stylus = require('stylus'),
     Photo = require('./lib/photo'),
     Photos = require('./lib/photos'),
-    session = require('./lib/session');
- 
-var app = express();
- 
-// This must be BEFORE other app.use
-app.use(stylus.middleware({
-    debug: true
-  , src: __dirname + '/views'
-  , dest: __dirname + '/public'
-  , compile: compileMethod
-}));
- 
-function compileMethod(str) {
-  return stylus(str)
-    .set('compress', true);
-};
- 
-app.use(express.static(__dirname + '/public'));
+    session = require('./lib/session'),
+    crypto = require('crypto'),
+    db = mongojs('piclist', ['app']);
 
-app.use(express.bodyParser());
+loadApp(
+  loadRoutes
+);
 
-app.use(express.cookieParser());
+function loadApp(next) {
+  db.app.findOne({_id: 1}, function(err, app) {
+    if (err || !app) {
+      crypto.randomBytes(48, function(ex, buf) {
+        var token = buf.toString('hex');
+  
+        app = {
+          key: token
+        }
+  
+        global.app = app;
 
-app.use(session());
+        db.app.save(app, next);
+      });
+  
+    } else {
+      global.app = app;
 
-app.get('/photos', function(req, res) {
-  var options = {
-    descending: req.query.descending == 'true',
-    tags: req.query.tags || []
-  }
-
-  new Photos().all(function(err, photos) {
-    if (!err)
-      res.json(photos);
-    else
-      res.json([]);
-  }, options);
-});
-
-app.get('/photo/:id?', function(req, res) {
-  var photo = new Photo(req.params.id, function(err) {
-    res.status(200);
-    res.json(photo.properties());
+      next();
+    }
   });
-});
+}
 
-app.get('/photo/original/:id?', function(req, res) {
-  var photo = new Photo(req.params.id, function(err) {
-    photo.getImage('original', function(err, image) {
-      if (!err) {
-        res.status(200);
-        res.set('Content-Type', image.type);
-        res.send(image.data);
-      } else {
-        res.status(500);
-        res.send('');
-      }
+function loadRoutes() {
+  var app = express();
+   
+  // This must be BEFORE other app.use
+  app.use(stylus.middleware({
+      debug: true
+    , src: __dirname + '/views'
+    , dest: __dirname + '/public'
+    , compile: compileMethod
+  }));
+   
+  function compileMethod(str) {
+    return stylus(str)
+      .set('compress', true);
+  };
+   
+  app.use(express.static(__dirname + '/public'));
+  
+  app.use(express.bodyParser());
+  
+  app.use(express.cookieParser());
+  
+  app.use(session());
+  
+  app.get('/photos', function(req, res) {
+    var options = {
+      descending: req.query.descending == 'true',
+      tags: req.query.tags || []
+    }
+  
+    new Photos().all(function(err, photos) {
+      if (!err)
+        res.json(photos);
+      else
+        res.json([]);
+    }, options);
+  });
+  
+  app.get('/photo/:id?', function(req, res) {
+    var photo = new Photo(req.params.id, function(err) {
+      res.status(200);
+      res.json(photo.properties());
     });
   });
-});
-
-app.get('/photo/thumb/:id?', function(req, res) {
-  var photo = new Photo(req.params.id, function(err) {
-    photo.getImage('thumb', function(err, image) {
-      if (!err) {
-        res.status(200);
-        res.set('Content-Type', image.type);
-        res.send(image.data);
-      } else {
-        res.status(500);
-        res.send('');
-      }
-    });
-  });
-});
-
-app.post('/photo', function(req, res) {
-  var finished_count = 0,
-      file_names = Object.keys(req.files);
-
-  file_names.forEach(function(file_name) {
-    var photo = new Photo();
-    photo.create(req.files[file_name], function(err) {
-      finished_count++;
-      if (finished_count == file_names.length)
-        res.send('');
-    });
-  });
-});
-
-app.delete('/photo/:id?', function(req, res) {
-  var photo = new Photo(req.params.id, function(err) {
-    photo.delete(function(err) {
-      if (err) {
-        res.status(500);
-      } else {
-        res.status(204);
-      }
-
-      res.send('');
-    });
-  });
-});
-
-app.post('/tag/add', function(req, res) {
-  var items = req.param('items') || [],
-      tags = req.param('tags') || [],
-      finished_count = 0,
-      photos = [];
-
-  items.forEach(function(item) {
-    var photo = new Photo(item, function(err) {
-      photos.push(photo.document);
-
-      photo.addTags(tags, function(err) {
-        finished_count++;
-        if (finished_count == items.length)
-          res.json(photos);
+  
+  app.get('/photo/original/:id?', function(req, res) {
+    var photo = new Photo(req.params.id, function(err) {
+      photo.getImage('original', function(err, image) {
+        if (!err) {
+          res.status(200);
+          res.set('Content-Type', image.type);
+          res.send(image.data);
+        } else {
+          res.status(500);
+          res.send('');
+        }
       });
     });
   });
-});
- 
-app.listen(3000);
-console.log('server listening on port 3000');
+  
+  app.get('/photo/thumb/:id?', function(req, res) {
+    var photo = new Photo(req.params.id, function(err) {
+      photo.getImage('thumb', function(err, image) {
+        if (!err) {
+          res.status(200);
+          res.set('Content-Type', image.type);
+          res.send(image.data);
+        } else {
+          res.status(500);
+          res.send('');
+        }
+      });
+    });
+  });
+  
+  app.post('/photo', function(req, res) {
+    var finished_count = 0,
+        file_names = Object.keys(req.files);
+  
+    file_names.forEach(function(file_name) {
+      var photo = new Photo();
+      photo.create(req.files[file_name], function(err) {
+        finished_count++;
+        if (finished_count == file_names.length)
+          res.send('');
+      });
+    });
+  });
+  
+  app.delete('/photo/:id?', function(req, res) {
+    var photo = new Photo(req.params.id, function(err) {
+      photo.delete(function(err) {
+        if (err) {
+          res.status(500);
+        } else {
+          res.status(204);
+        }
+  
+        res.send('');
+      });
+    });
+  });
+  
+  app.post('/tag/add', function(req, res) {
+    var items = req.param('items') || [],
+        tags = req.param('tags') || [],
+        finished_count = 0,
+        photos = [];
+  
+    items.forEach(function(item) {
+      var photo = new Photo(item, function(err) {
+        photos.push(photo.document);
+  
+        photo.addTags(tags, function(err) {
+          finished_count++;
+          if (finished_count == items.length)
+            res.json(photos);
+        });
+      });
+    });
+  });
+  
+  app.post('/user/signin', function(req, res) {
+    var username = req.param('username'),
+        password = req.param('password');
+  
+    session.signIn(username, password, function() {
+      if (err) {
+        res.statusCode = 412;
+        res.json(err);
+      } else {
+        res.json(user);
+      }
+    });
+  });
+   
+  app.post('/user/signout', function(req, res) {
+    var session = req.session;
+  
+    if (session)
+      session.signOut();
+    else
+      res.statusCode = 405;
+
+    res.json({});
+  });
+   
+  app.listen(3000);
+  console.log('server listening on port 3000');
+}
