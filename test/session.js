@@ -25,8 +25,17 @@ describe('Session', function() {
   });
 
   afterEach(function(done) {
+    var expect = 2,
+        count = 0;
+
     db.user.remove({_id: /^test_/}, function() {
-      done();
+      if (++count == expect)
+        done();
+    });
+
+    db.session.remove({'user.id': /test_/}, function() {
+      if (++count == expect)
+        done();
     });
   });
 
@@ -138,13 +147,26 @@ describe('Session', function() {
       Session.delete.restore();
     });
 
-    it('should delete the session', function() {
-      Session.
-// How do we clean up the created sessions? Search for the user property in the session store?
+    it('should delete the session', function(done) {
+      Session.create(this.user, this.res, (function(err, session) {
+
+        Session.signOut(session);
+        
+        expect(this.req.session).to.be(undefined);
+
+        done();
+      }).bind(this));
     });
   });
 
   describe('delete', function() {
+    it('should delete the session', function(done) {
+      Session.create(this.user, this.res, (function(err, session) {
 
+        Session.delete(session);
+        
+        done();
+      }).bind(this));
+    });
   });
 });
