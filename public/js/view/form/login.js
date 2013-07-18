@@ -7,6 +7,7 @@ View.Form.Login = Backbone.View.extend({
 
   template: _.template(
     '<header>Sign in</header>'
+  + '<div class="errors"></div>'
   + '<div class="form">'
   + '  <div>'
   + '    <label>Username</label>'
@@ -50,7 +51,7 @@ View.Form.Login = Backbone.View.extend({
                 this.$('input.password').val());
   },
 
-  paintErrors: function() {
-
+  paintErrors: function(model, errors) {
+    this.$('.errors').html(_.isArray(errors) && errors.join(','));
   }
 });

@@ -2,40 +2,15 @@
 * Module dependencies.
 */
  
+    global.app = require('./lib/app');
 var express = require('express'),
     stylus = require('stylus'),
     Photo = require('./lib/photo'),
     Photos = require('./lib/photos'),
     session = require('./lib/session'),
-    crypto = require('crypto'),
-    db = mongojs('piclist', ['app']);
+    crypto = require('crypto');
 
-loadApp(
-  loadRoutes
-);
-
-function loadApp(next) {
-  db.app.findOne({_id: 1}, function(err, app) {
-    if (err || !app) {
-      crypto.randomBytes(48, function(ex, buf) {
-        var token = buf.toString('hex');
-  
-        app = {
-          key: token
-        }
-  
-        global.app = app;
-
-        db.app.save(app, next);
-      });
-  
-    } else {
-      global.app = app;
-
-      next();
-    }
-  });
-}
+global.app.load(loadRoutes);
 
 function loadRoutes() {
   var app = express();

@@ -9,10 +9,14 @@ Model.User = Backbone.Model.extend({
         email: email,
         password: password
       }
-    }).fail(function(errors) {
+    })
+
+    .fail((function(errors) {
       this.set('errors', ['Login Failed']);
 
-    }).complete((function(data) {
+    }).bind(this))
+
+    .complete((function(data) {
       if (_.isArray(data))
         this.set('errors', data);
       else
