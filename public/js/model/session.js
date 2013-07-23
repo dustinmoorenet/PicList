@@ -1,30 +1,47 @@
 Model.Session = Backbone.Model.extend({
   url: '/session',
 
+  initialize: function() {
+
+  },
+
   signIn: function(email, password) {
+
+    user = new Model.User();
+
     $.ajax({
       type: 'POST',
       url: '/session/signin',
       data: {
         email: email,
         password: password
-      }
-    }).fail(function(errors) {
-      this.set('errors', ['Login Failed']);
+      },
+      dataType: 'json'
+    }).fail(this.onSignInFail.bind(this))
+      .done(this.setSession.bind(this))
+  },
 
-    }).complete((function(data) {
-      if (_.isArray(data))
-        this.set('errors', data);
-      else
-        this.set(data);
+  onSignInFail: function() {
+    this.setSession(['Login Failed']);
+  },
 
-    }).bind(this));
+  setSession: function(data) {
+    if (_.isArray(data))
+      user.set('errors', data);
+    else
+      user.set(data);
   },
 
   signOut: function() {
     $.get('/session/signout')
-     .always((function() {
-      this.clear();
-    }).bind(this));;
+     .always(this.clearSession.bind(this));
+  },
+
+  clearSession: function() {
+    if (user) {
+      user.stopListening();
+
+      user = null;
+    }
   }
 });

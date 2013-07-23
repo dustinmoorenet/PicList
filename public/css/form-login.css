@@ -1,6 +1,7 @@
 .login.form{background:#808080;border-top-left-radius:20px;border-bottom-right-radius:5px;border-bottom-left-radius:5px;border-top-right-radius:5px;}
 .login.form header{padding:0 10px;margin-bottom:10px;line-height:36px;height:36px;background:#fff;border-top-left-radius:20px;border-top-right-radius:5px;}
 .login.form header .title{float:left;text-transform:uppercase;font-weight:bold}
+.login.form .errors{padding-left:10px}
 .login.form .form{padding:10px;min-width:300px;max-width:500px;}
 .login.form .form label{display:inline-block;text-transform:uppercase;font-size:.8em;color:#fff;text-shadow:-1px 1px 0 #000;width:90px}
 .login.form .form input{display:inline-block;font-size:1.2em;margin:5px 0 20px}

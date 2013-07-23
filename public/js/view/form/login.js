@@ -2,7 +2,8 @@ View.Form.Login = Backbone.View.extend({
   className: 'login form',
 
   events: {
-    'click .submit': 'signIn'
+    'click .submit': 'signIn',
+    'keydown': 'onKeyDown'
   },
 
   template: _.template(
@@ -25,9 +26,6 @@ View.Form.Login = Backbone.View.extend({
 
   initialize: function() {
     this.render()
-
-    this.listenTo(user, 'change:id', this.remove);
-    this.listenTo(user, 'change:errors', this.paintErrors);
   },
 
   render: function() {
@@ -46,12 +44,22 @@ View.Form.Login = Backbone.View.extend({
     Backbone.View.prototype.remove.apply(this);
   },
 
+  onKeyDown: function(evt) {
+    if (evt.which == 13)
+      this.signIn();
+  },
+
   signIn: function() {
-    user.signIn(this.$('input.username').val(),
-                this.$('input.password').val());
+    session.signIn(this.$('input.username').val(),
+                   this.$('input.password').val());
+
+    this.listenTo(user, 'change:id', this.remove);
+    this.listenTo(user, 'change:errors', this.paintErrors);
   },
 
   paintErrors: function(model, errors) {
     this.$('.errors').html(_.isArray(errors) && errors.join(','));
+
+    this.stopListening(user);
   }
 });

@@ -1,16 +1,14 @@
 var message = _.clone(Backbone.Events),
     main,
     photos,
-    user;
+    user,
+    session,
+    routes = {};
 
 $(function() {
-  user = new Model.User();
+  session = new Model.Session();
 
-  main = new View.Main();
+  routes.main = new Router.Main();
 
-  main.render();
-
-  $('body').append(main.el);
-
-  new View.Form.Login();
+  Backbone.history.start();
 });
