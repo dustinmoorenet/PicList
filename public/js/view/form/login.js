@@ -1,3 +1,6 @@
+/**
+ * Form for signing into the system
+ */
 View.Form.Login = Backbone.View.extend({
   className: 'login form',
 
@@ -24,10 +27,16 @@ View.Form.Login = Backbone.View.extend({
   + '</div>'
   ),
 
+  /**
+   * Render DOM
+   */
   initialize: function() {
     this.render()
   },
 
+  /**
+   * Build DOM
+   */
   render: function() {
     this.$el.html(this.template());
 
@@ -38,17 +47,30 @@ View.Form.Login = Backbone.View.extend({
     $('body').append(this.modal.el);
   },
 
+  /**
+   * Remove form and refresh page
+   */
   remove: function() {
+    location = '';
+
     this.modal.remove();
 
     Backbone.View.prototype.remove.apply(this);
   },
 
+  /**
+   * A key was pressed, watch for the Enter key
+   *
+   * @param [Event] evt The key down event
+   */
   onKeyDown: function(evt) {
     if (evt.which == 13)
       this.signIn();
   },
 
+  /**
+   * Sign in the user
+   */
   signIn: function() {
     session.signIn(this.$('input.username').val(),
                    this.$('input.password').val());
@@ -57,6 +79,9 @@ View.Form.Login = Backbone.View.extend({
     this.listenTo(user, 'change:errors', this.paintErrors);
   },
 
+  /**
+   * Login error where received
+   */
   paintErrors: function(model, errors) {
     this.$('.errors').html(_.isArray(errors) && errors.join(','));
 

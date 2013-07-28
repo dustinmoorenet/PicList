@@ -1,0 +1,5 @@
+.toolbar .account{line-height:35px;float:right;margin-right:20px;}
+.toolbar .account .sign-in{display:block}
+.toolbar .account .menu{display:none}
+body.has-session .toolbar .account .sign-in{display:none}
+body.has-session .toolbar .account .menu{display:block}

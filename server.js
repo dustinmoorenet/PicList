@@ -134,6 +134,14 @@ function loadRoutes() {
     });
   });
   
+  app.get('/session/info', function(req, res) {
+    if (req.session)
+      res.json({has_session: true});
+
+    else
+      res.json({has_session: false});
+  });
+
   app.post('/session/signin', function(req, res) {
     var email = req.param('email'),
         password = req.param('password');
@@ -148,10 +156,9 @@ function loadRoutes() {
     });
   });
    
-  app.post('/session/signout', function(req, res) {
-    var session = req.session;
+  app.get('/session/signout', function(req, res) {
   
-    if (session)
+    if (req.session)
       session.signOut(req);
     else
       res.statusCode = 405;

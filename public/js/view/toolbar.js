@@ -9,6 +9,9 @@ View.Toolbar = Backbone.View.extend({
     this.add_tag = new View.AddTag();
     this.$el.append(this.add_tag.el);
 
+    this.account = new View.Toolbar.Account();
+    this.$el.append(this.account.el);
+
     this.upload_dialog = new View.UploadDialog();
     this.$el.append(this.upload_dialog.el);
 

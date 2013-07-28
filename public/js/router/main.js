@@ -1,7 +1,9 @@
+/**
+ * Main router
+ */
 Router.Main = Backbone.Router.extend({
   routes: {
     '': function() {
-console.log('in base');
       main = new View.Main();
 
       main.render();
