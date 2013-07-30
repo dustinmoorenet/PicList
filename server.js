@@ -42,9 +42,9 @@ function loadRoutes() {
       tags: req.query.tags || []
     }
   
-    new Photos().all(function(err, photos) {
+    new Photos().find(function(err, photos) {
       if (!err)
-        res.json(photos);
+        res.json(photos.toJSON());
       else
         res.json([]);
     }, options);
@@ -53,7 +53,7 @@ function loadRoutes() {
   app.get('/photo/:id?', function(req, res) {
     var photo = new Photo(req.params.id, function(err) {
       res.status(200);
-      res.json(photo.properties());
+      res.json(photo.toJSON());
     });
   });
   

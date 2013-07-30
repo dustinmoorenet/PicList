@@ -20,11 +20,33 @@ View.PhotoList = Backbone.View.extend({
 
     this.clearPhotos();
   
+    this.bestFit();
+
     photos.forEach(this.addPhoto.bind(this));
   },
 
   clearPhotos: function() {
     this.$('.photo-list-item').remove();
+  },
+
+  bestFit: function() {
+    var total_width = this.$el.width();
+
+    // for each photo
+    photos.forEach((function(photo) {
+
+      // get width for 200px height
+      
+
+      // if running_total + width_200 < total_width
+      //   add photo to row and add to running total
+      // else
+      //   determine best height to fit width
+      //   diff = total_width / running_total
+      //   best_height = 200 * diff
+      //   increment row
+      //   reset running_total
+    }).bind(this));
   },
   
   addPhoto: function(photo) {
