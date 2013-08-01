@@ -8,6 +8,8 @@ View.Main = Backbone.View.extend({
 
   initialize: function() {
     this.upload_sets = new Collection.UploadSets();
+
+    $(window).resize(_.debounce(this.resize.bind(this), 200));
   },
 
   render: function() {
@@ -35,6 +37,10 @@ View.Main = Backbone.View.extend({
   handleDragEnter: function() {
     this.upload_drop.show();
   },
+
+  resize: function() {
+    this.trigger('resize', this.$el.width(), this.$el.height());
+  }
 });
 
 

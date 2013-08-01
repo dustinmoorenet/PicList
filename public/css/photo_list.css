@@ -1,11 +1,2 @@
-.photo-list{width:100%;height:100%;overflow-y:auto;}
+.photo-list{width:100%;height:100%;overflow-y:auto;position:relative;}
 .photo-list .fake-padding{height:35px;width:100%}
-.photo-list > .item{position:relative;float:left;}
-.photo-list > .item:hover .icon{display:block}
-.photo-list > .item.selected .icon{display:block}
-.photo-list > .item img{display:block}
-.photo-list > .item .icon{display:none;position:absolute;width:25px;height:25px;border-radius:5px;background-color:rgba(0,0,0,0.3);}
-.photo-list > .item .icon:hover{background-color:rgba(0,0,0,0.1)}
-.photo-list > .item .expand.icon{top:15px;right:15px;background-image:url("/img/expand.png")}
-.photo-list > .item .info.icon{bottom:15px;right:15px;background-image:url("/img/info.png");height:24px;width:24px}
-.photo-list > .item .trash.icon{bottom:15px;left:15px;background-image:url("/img/trash.png")}

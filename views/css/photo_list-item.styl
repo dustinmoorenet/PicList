@@ -1,0 +1,55 @@
+.photo-list > .item
+  position absolute
+  -moz-box-sizing border-box
+  box-sizing border-box 
+  padding 1px
+
+  &:hover
+    .icon
+      display block
+
+  &.selected
+    padding 10px
+
+    img
+      opacity .75
+
+    .icon
+      display block
+
+  img
+    display none 
+    width 100%
+    height 100%
+
+  &.loaded.positioned
+    img
+      display block
+
+  .icon
+    display none
+    position absolute
+    width 25px
+    height 25px
+    border-radius 5px
+    background-color rgba(0,0,0,.3);
+
+    &:hover
+      background-color rgba(0,0,0,.1);
+
+  .expand.icon
+    top 15px
+    right 15px
+    background-image url('/img/expand.png')
+
+  .info.icon
+    bottom 15px
+    right 15px
+    background-image url('/img/info.png')
+    height 24px
+    width 24px
+
+  .trash.icon
+    bottom 15px
+    left 15px
+    background-image url('/img/trash.png') 

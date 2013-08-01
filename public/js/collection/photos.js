@@ -19,6 +19,11 @@ Collection.Photos = Backbone.Collection.extend({
   setSort: function(descending) {
     this.query_parts.descending = !!descending;
 
+    if (this.query_parts.decending)
+      this.comparator = this.sortNEWEST;
+    else
+      this.comparator = this.sortOLDEST;
+
     this.fetch({reset: true}); 
   },
 
@@ -28,5 +33,15 @@ Collection.Photos = Backbone.Collection.extend({
     this.query_parts.tags = tags;
 
     this.fetch({reset: true}); 
+  },
+
+  sortOLDEST: function(a, b) {
+    return Util.compare(a.get('original_date_time'),
+                        b.get('original_date_time'));
+  },
+
+  sortNEWEST: function(a, b) {
+    return Util.compare(b.get('original_date_time'),
+                        a.get('original_date_time'));
   }
 });
